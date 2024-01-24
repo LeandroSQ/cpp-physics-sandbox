@@ -23,8 +23,51 @@ void Object::update(float deltaTime) {
     acceleration = raylib::Vector2::Zero();
 }
 
+raylib::Color getColorFromTemperature(float temperature) {
+    // Cool colors are blue
+    // Hot colors are red
+    // Extreme colors are white
+    // Using Kelvin scale
+    // https://en.wikipedia.org/wiki/Color_temperature
+
+    // 1000K - 4000K
+    if (temperature < 4000.0f) {
+        auto t = temperature / 4000.0f;
+        return raylib::Color {
+            (uint8_t)(255.0f * t),
+            0,
+            0,
+            255
+        };
+    }
+
+    // 4000K - 7000K
+    if (temperature < 7000.0f) {
+        auto t = (temperature - 4000.0f) / 3000.0f;
+        return raylib::Color {
+            255,
+            (uint8_t)(255.0f * t),
+            0,
+            255
+        };
+    }
+
+    // 7000K - 10000K
+    if (temperature < 10000.0f) {
+        auto t = (temperature - 7000.0f) / 3000.0f;
+        return raylib::Color {
+            255,
+            255,
+            (uint8_t)(255.0f * t),
+            255
+        };
+    }
+
+    return WHITE;
+}
+
 void Object::render() {
-	DrawCircleV(position, radius, color);
+	DrawCircleV(position, radius, getColorFromTemperature(temperature));
 }
 
 raylib::Rectangle Object::getBounds() {

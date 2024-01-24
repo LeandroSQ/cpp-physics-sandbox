@@ -13,17 +13,24 @@ float random(float min, float max) {
 }
 
 void spawn() {
-	auto obj = std::make_shared<Object>(
-		raylib::Vector2{ GetScreenWidth() / 2.0f, 75.0f },
-		// raylib::Vector2 { random(-10.0f, 10.0f), 0.0f },
-		raylib::Vector2{ cos(angle) * 1000000.0f, sin(angle) * 1000000.0f },
-		0.0f,
-        10.0f,
-		// random(2.0f, 15.0f),
-		0.0f,
-		WHITE
-	);
-	quadtree.add(obj);
+	int size = 20;
+    int margin = 60;
+
+    // Spawn objects in a grid
+    for (int x = margin; x < WIDTH - margin; x += size - 1) {
+        for (int y = margin; y < HEIGHT - margin; y += size) {
+            auto object = std::make_shared<Object>(
+                raylib::Vector2{ (float)x, (float)y },
+                raylib::Vector2{ 0.0f, 0.0f },
+                1.0f,
+                size / 2.0f,
+                0.0f,
+                WHITE
+            );
+
+            quadtree.add(object);
+        }
+    }
 }
 
 void update() {
@@ -31,19 +38,6 @@ void update() {
 	float dt = GetFrameTime() / float(substeps);
 
 	angle = sin(GetTime()) * 0.25f * PI + 0.5f * PI;
-
-	if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
-		spawn();
-	else if (true || IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
-		if (spawnTimer >= SPAWN_INTERVAL && quadtree.size() < SPAWN_COUNT) {
-			spawnTimer -= SPAWN_INTERVAL;
-			spawn();
-		} else {
-			spawnTimer += GetFrameTime();
-		}
-	} else {
-		spawnTimer = SPAWN_INTERVAL;
-	}
 
 	for (uint8_t i = 0; i < substeps; i++) {
 		solver.solve(quadtree, dt);
@@ -60,10 +54,10 @@ void render(raylib::Window &window) {
 	DrawCircle(WIDTH / 2, HEIGHT / 2, 400.0f, BLACK);
 
 	// Render
-	// for (auto object : quadtree.getAll()) object->render();
+	for (auto object : quadtree.getAll()) object->render();
 
 	// Debug quadtree
-	quadtree.render();
+	// quadtree.render();
 
 	// Stats
 	DrawText(TextFormat("%i FPS", GetFPS()), 10, 10, 20, WHITE);
@@ -97,6 +91,8 @@ int main() {
 	emscripten_set_main_loop(render, 0, 1);
 #else
 	SetTargetFPS(TARGET_FPS);
+
+    spawn();
 
 	while (!window.ShouldClose()) {
 		render(window);
