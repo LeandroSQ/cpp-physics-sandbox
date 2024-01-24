@@ -9,7 +9,7 @@ float spawnTimer = 0.0f;
 float angle = 90.0f * DEG2RAD;
 
 float random(float min, float max) {
-	return min + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (max - min)));
+	return GetRandomValue(min * 1000.0f, max * 1000.0f) / 1000.0f;
 }
 
 void spawn() {
@@ -18,8 +18,8 @@ void spawn() {
 		// raylib::Vector2 { random(-10.0f, 10.0f), 0.0f },
 		raylib::Vector2{ cos(angle) * 1000000.0f, sin(angle) * 1000000.0f },
 		0.0f,
-        10.0f,
-		// random(2.0f, 15.0f),
+        // 10.0f,
+		random(3.0f, 20.0f),
 		0.0f,
 		WHITE
 	);
@@ -85,7 +85,8 @@ void setup() {
 #endif
 
 	TraceLog(LOG_INFO, "main: Starting...");
-	SetRandomSeed(GetTime());
+	// SetRandomSeed(GetTime());
+	SetRandomSeed(1337);
 	SetConfigFlags(FLAG_MSAA_4X_HINT);
 }
 
