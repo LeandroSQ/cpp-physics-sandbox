@@ -12,7 +12,7 @@ void render() {
 
 int main() {
 	SetTargetFPS(TARGET_FPS);
-    SetConfigFlags(FLAG_MSAA_4X_HINT);
+    // SetConfigFlags(FLAG_MSAA_4X_HINT);
 
     InitWindow(WIDTH, HEIGHT, "Fire!");
 

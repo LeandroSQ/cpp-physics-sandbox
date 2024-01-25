@@ -10,7 +10,7 @@ class App {
     Quadtree quadtree;
     Solver solver;
     Spawner spawner;
-    bool isRenderingQuadtree = false;
+    bool isRenderingQuadtree = true;
 
     void handleInput(float deltaTime);
     void renderGUI();
@@ -18,7 +18,7 @@ class App {
   public:
     App();
     ~App();
-    
+
     void setup();
     void update();
     void render();

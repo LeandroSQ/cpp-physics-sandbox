@@ -1,11 +1,7 @@
 #include "solver.hpp"
 
-const float TRANSFER_CONTACT_TEMPERATURE = 0.025f;
 const float AIR_TEMPERATURE = 4000.0f;
-const float TRANSFER_AIR_TEMPERATURE = 0.005f;
 const float GROUND_TEMPERATURE = 10000.0f;
-const float TRANSFER_GROUND_TEMPERATURE = 0.25f;
-const float UPWARDS_TEMPERATURE = 3.0f;
 
 Solver::Solver(Quadtree &quadtree) : quadtree(quadtree) {
 	centerCirclePosition = raylib::Vector2{ WIDTH / 2.0f, HEIGHT / 2.0f };
@@ -19,13 +15,8 @@ void Solver::applyGravity(std::shared_ptr<Object> object, float deltaTime) {
 
     // The more heat, the more upwards acceleration
     auto temp = (object->temperature - AIR_TEMPERATURE) / (GROUND_TEMPERATURE - AIR_TEMPERATURE);
-    object->acceleration -= gravity * object->mass * temp * UPWARDS_TEMPERATURE;
+    object->acceleration -= gravity * object->mass * powf(temp, 2.0f) * temperatureFloatingForce;
 
-// #ifdef CENTER_CIRCLE
-
-// #else
-	// if (object->temperature > 5000.0f) object->acceleration.y -= object->temperature * UPWARDS_TEMPERATURE;
-// #endif
 }
 
 void Solver::applyConstraints(std::shared_ptr<Object> object, float deltaTime) {
@@ -36,14 +27,14 @@ void Solver::applyConstraints(std::shared_ptr<Object> object, float deltaTime) {
     if constexpr (ENABLE_TEMPERATURE) {
         // Transfer heat from the border of the circle
         /* if (distance >= CENTER_CIRCLE_RADIUS - object->radius * 4) {
-            auto deltaTemperature = (object->temperature - GROUND_TEMPERATURE) * TRANSFER_GROUND_TEMPERATURE;
+            auto deltaTemperature = (object->temperature - GROUND_TEMPERATURE) * temperatureTransferGroundMultiplier;
             object->temperature -= deltaTemperature;
         } */
 
         // Transfer heat from the bottom of the circle
         auto distanceFromBottom = object->position - raylib::Vector2{ centerCirclePosition.x, centerCirclePosition.y + CENTER_CIRCLE_RADIUS };
         if (distanceFromBottom.Length() <= object->radius * 14) {
-            auto deltaTemperature = (object->temperature - GROUND_TEMPERATURE) * TRANSFER_GROUND_TEMPERATURE;
+            auto deltaTemperature = (object->temperature - GROUND_TEMPERATURE) * temperatureTransferGroundMultiplier;
             object->temperature -= deltaTemperature;
         }
     }
@@ -70,7 +61,7 @@ void Solver::applyConstraints(std::shared_ptr<Object> object, float deltaTime) {
 
 	if (object->position.y + object->radius >= screen.y - object->radius * 4) {
 		// Transfer temperature from the ground
-		auto deltaTemperature = (object->temperature - GROUND_TEMPERATURE) * TRANSFER_GROUND_TEMPERATURE;
+		auto deltaTemperature = (object->temperature - GROUND_TEMPERATURE) * temperatureTransferGroundMultiplier;
 		object->temperature -= deltaTemperature;
 	}
 #endif
@@ -87,8 +78,9 @@ void Solver::solveCollisions(std::shared_ptr<Object> object) {
 		if (other == object) continue;
 
 		const raylib::Vector2 direction = object->position - other->position;
-		const float distance = direction.Length();
-		if (distance < object->radius + other->radius) {
+		float distance = direction.LengthSqr();
+		if (distance < powf(object->radius + other->radius, 2.0f)) {
+            distance = sqrtf(distance);
 			collision = true;
 			auto normal = direction / distance;
 			auto delta = (object->radius + other->radius) - distance;
@@ -97,7 +89,7 @@ void Solver::solveCollisions(std::shared_ptr<Object> object) {
 
 			// Transfer temperature between objects slightly 10% of the time
 			if constexpr (ENABLE_TEMPERATURE) {
-				auto deltaTemperature = (object->temperature - other->temperature) * TRANSFER_CONTACT_TEMPERATURE;
+				auto deltaTemperature = (object->temperature - other->temperature) * temperatureTransferContactMultiplier;
 				object->temperature -= deltaTemperature;
 				other->temperature += deltaTemperature;
 			}
@@ -106,7 +98,7 @@ void Solver::solveCollisions(std::shared_ptr<Object> object) {
 
 	if (!collision && ENABLE_TEMPERATURE) {
 		// Cool temperature transfering to air
-		auto deltaTemperature = (object->temperature - AIR_TEMPERATURE) * TRANSFER_AIR_TEMPERATURE;
+		auto deltaTemperature = (object->temperature - AIR_TEMPERATURE) * temperatureTransferAirMultiplier;
 		object->temperature -= deltaTemperature;
 	}
 }
@@ -121,8 +113,8 @@ void Solver::solve(float deltaTime) {
 		iterationSum = 0;
 	}
 
-	float dt = deltaTime / float(SUBSTEPS);
-	for (uint8_t i = 0; i < SUBSTEPS; i++) {
+	float dt = deltaTime / float(substeps);
+	for (uint8_t i = 0; i < substeps; i++) {
 		for (auto object : quadtree.getAll()) {
 			applyGravity(object, dt);
 			solveCollisions(object);

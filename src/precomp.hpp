@@ -9,8 +9,6 @@
  #include <emscripten/emscripten.h>
 #endif
 
-// #include <magic_enum_all.hpp>
-
 #include <algorithm>
 #include <iostream>
 #include <memory>

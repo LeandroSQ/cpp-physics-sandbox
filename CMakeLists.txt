@@ -49,19 +49,16 @@ add_subdirectory(lib)
 
 # Executable
 add_executable(${PROJECT_NAME} ${SOURCES})
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
 
 # Precompiled headers
 target_precompile_headers(${PROJECT_NAME} PRIVATE ${PRECOMPILED_HEADERS})
 
 # Link dependencies
 target_link_libraries(${PROJECT_NAME} raylib)
-target_link_libraries(${PROJECT_NAME} magic_enum)
 target_link_libraries(${PROJECT_NAME} raylib_cpp)
 target_link_libraries(${PROJECT_NAME} dear_imgui)
-# target_link_libraries(${PROJECT_NAME} rlimgui)
-# target_compile_definitions(${PROJECT_NAME} PRIVATE NO_FONT_AWESOME)
-# target_link_libraries(${PROJECT_NAME} raygui)
-# target_compile_definitions(${PROJECT_NAME} PRIVATE RAYGUI_IMPLEMENTATION)
+target_link_libraries(${PROJECT_NAME} rlimgui)
 
 if(APPLE) # Checks if OSX and links appropriate frameworks (Only required on MacOS)
     target_link_libraries(${PROJECT_NAME} "-framework IOKit")
@@ -69,18 +66,11 @@ if(APPLE) # Checks if OSX and links appropriate frameworks (Only required on Mac
     target_link_libraries(${PROJECT_NAME} "-framework OpenGL")
 endif()
 
+
 if(PLATFORM STREQUAL "Web") # Web Configurations
     # Tell Emscripten to build an example.html file.
     set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
 endif()
-
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
-# set_target_properties(${PROJECT_NAME} PROPERTIES
-#     CXX_STANDARD 11
-#     CXX_STANDARD_REQUIRED ON
-#     CXX_EXTENSIONS OFF
-# )
-
 # endregion
 
 # region Linter

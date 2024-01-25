@@ -206,6 +206,11 @@ void Quadtree::render() {
 	}
 }
 
+void Quadtree::clear() {
+    children.clear();
+    quadrants.clear();
+}
+
 std::vector<std::shared_ptr<Quadtree>> Quadtree::getQuadrants() {
     return quadrants;
 }

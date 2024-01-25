@@ -7,6 +7,7 @@
 class Spawner {
   private:
     Quadtree &quadtree;
+    std::vector<std::shared_ptr<Object>> draggingObjects;
 
     float angle = 0.0f;
     float timer = 0.0f;
@@ -17,5 +18,5 @@ class Spawner {
   public:
     Spawner(Quadtree &quadtree);
 
-    void update(float deltaTime);
+    void update(float deltaTime, bool consumeInput);
 };

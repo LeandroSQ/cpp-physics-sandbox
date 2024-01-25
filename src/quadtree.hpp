@@ -29,5 +29,6 @@ class Quadtree {
 	unsigned int size();
 	unsigned int getSubdivisions();
 	std::vector<std::shared_ptr<Object>> query(raylib::Rectangle range);
+    void clear();
 	void render();
 };

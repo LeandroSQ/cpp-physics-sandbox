@@ -3,7 +3,7 @@
 Spawner::Spawner(Quadtree &quadtree) : quadtree(quadtree) { }
 
 void Spawner::spawn() {
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 4; i++) {
         raylib::Vector2 position;
         raylib::Vector2 acceleration;
         if (isSpawning) {
@@ -33,7 +33,7 @@ void Spawner::spawn() {
     }
 }
 
-void Spawner::update(float deltaTime) {
+void Spawner::update(float deltaTime, bool consumeInput) {
     if (isSpawning) {
         angle = sin(GetTime()) * 0.25f * PI + 0.5f * PI;
         timer += deltaTime;
@@ -46,7 +46,13 @@ void Spawner::update(float deltaTime) {
                 timer = 0;
             }
         }
-    } else if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
+
+        return;
+    }
+
+    if (!consumeInput) return;
+
+    if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
         spawn();
         timer = 0;
     } else if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
@@ -54,6 +60,44 @@ void Spawner::update(float deltaTime) {
         if (timer >= MANUAL_SPAWN_INTERVAL) {
             timer -= MANUAL_SPAWN_INTERVAL;
             spawn();
+        }
+    }
+
+    if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON)) {// Dragging
+
+        auto position = raylib::Vector2(GetMouseX(), GetMouseY());
+
+        if (draggingObjects.size() == 0) {
+            constexpr float radius = 50.0f;
+            auto objects = quadtree.query(raylib::Rectangle{ position.x - radius, position.y - radius, radius * 2.0f, radius * 2.0f });
+
+            for (auto object : objects) {
+                draggingObjects.push_back(object);
+            }
+        }
+
+        for (auto object : draggingObjects) {
+            object->acceleration = (position - object->position).Normalize() * 35000.0f;
+        }
+
+        // Explosion
+        /* */
+    } else {
+        draggingObjects.clear();
+    }
+
+    if (IsMouseButtonReleased(MOUSE_BUTTON_MIDDLE)) {// Explosions
+        const float force = 1500000.0f;
+        constexpr float radius = 50.0f;
+        auto position = raylib::Vector2(GetMouseX(), GetMouseY());
+        auto objects = quadtree.query(raylib::Rectangle{ position.x - radius, position.y - radius, radius * 2.0f, radius * 2.0f });
+        for (auto object : objects) {
+            auto direction = object->position - position;
+            auto distance = direction.Length();
+            if (distance < radius) {
+                auto normal = direction / distance;
+                object->acceleration += normal * force;
+            }
         }
     }
 }
