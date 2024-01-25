@@ -1,6 +1,6 @@
 #include "constants.hpp"
 
-#if !defined(QUADTREE_DUMMY) && !defined(QUADTREE_GRID)
+#ifndef QUADTREE_DUMMY
 
 #include "quadtree.hpp"
 
@@ -91,7 +91,6 @@ bool Quadtree::remove(std::shared_ptr<Object> object) {
 			if (*it == object) {
 				object->quadrant = nullptr;
 				children.erase(it);
-                mutex.unlock();
 			    return true;
 			}
 		}

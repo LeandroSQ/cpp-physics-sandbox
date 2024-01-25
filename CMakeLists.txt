@@ -22,23 +22,16 @@ function(define_project_variables)
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
     set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
-    # For OpenMP on MacOS M1, include the llvm toolchain from homebrew
-    if (APPLE)
-        set(CMAKE_C_COMPILER "/opt/homebrew/opt/llvm/bin/clang")
-        set(CMAKE_CXX_COMPILER "/opt/homebrew/opt/llvm/bin/clang++")
-    endif()
-
-    # set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
-    # set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
-    # set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
-
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
     set(CMAKE_C_STANDARD 11)
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O3")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
     set(CMAKE_CXX_STANDARD 23)
+
+    # For clang use -std=c++23
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++23")
 
     cmake_minimum_required(VERSION 3.15.0)
 endfunction()
@@ -64,34 +57,29 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE ${PRECOMPILED_HEADERS})
 target_link_libraries(${PROJECT_NAME} raylib)
 target_link_libraries(${PROJECT_NAME} magic_enum)
 target_link_libraries(${PROJECT_NAME} raylib_cpp)
+target_link_libraries(${PROJECT_NAME} dear_imgui)
+# target_link_libraries(${PROJECT_NAME} rlimgui)
+# target_compile_definitions(${PROJECT_NAME} PRIVATE NO_FONT_AWESOME)
+# target_link_libraries(${PROJECT_NAME} raygui)
+# target_compile_definitions(${PROJECT_NAME} PRIVATE RAYGUI_IMPLEMENTATION)
 
 if(APPLE) # Checks if OSX and links appropriate frameworks (Only required on MacOS)
     target_link_libraries(${PROJECT_NAME} "-framework IOKit")
     target_link_libraries(${PROJECT_NAME} "-framework Cocoa")
     target_link_libraries(${PROJECT_NAME} "-framework OpenGL")
-
-    # Include libomp for OpenMP on MacOS
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xpreprocessor -fopenmp -lomp")
-    target_include_directories(${PROJECT_NAME} PRIVATE "/opt/homebrew/opt/libomp/include")
-    target_link_directories(${PROJECT_NAME} PRIVATE "/opt/homebrew/opt/libomp/lib")
 endif()
-
-find_package(Threads REQUIRED)
-target_link_libraries(${PROJECT_NAME} Threads::Threads)
-# find_package(OpenMP REQUIRED)
-# target_link_libraries(${PROJECT_NAME} OpenMP::OpenMP_CXX)
-
 
 if(PLATFORM STREQUAL "Web") # Web Configurations
     # Tell Emscripten to build an example.html file.
     set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
 endif()
 
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 23
-    CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF
-)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
+# set_target_properties(${PROJECT_NAME} PROPERTIES
+#     CXX_STANDARD 11
+#     CXX_STANDARD_REQUIRED ON
+#     CXX_EXTENSIONS OFF
+# )
 
 # endregion
 
@@ -102,6 +90,14 @@ add_custom_target(${PROJECT_NAME}_lint
     COMMAND clang-tidy ${LINT_SOURCES}
     COMMENT "Running clang-tidy"
     DEPENDS ${LINT_SOURCES}
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
+# endregion
+
+# region Clean
+add_custom_target(${PROJECT_NAME}_clean
+    COMMAND sh ${CMAKE_SOURCE_DIR}/scripts/clean.sh
+    COMMENT "Running clean.sh"
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 # endregion

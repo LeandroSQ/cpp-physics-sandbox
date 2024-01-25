@@ -55,9 +55,7 @@ std::vector<std::shared_ptr<Object>> Quadtree::query(raylib::Rectangle range) {
 	std::vector<std::shared_ptr<Object>> objects;
 
 	for (auto node : children) {
-        if (range.CheckCollision(node->getBounds())) {
-            objects.push_back(node);
-        }
+        objects.push_back(node);
     }
 
 	return objects;

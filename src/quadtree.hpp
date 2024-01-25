@@ -8,17 +8,11 @@ class Quadtree;
 
 class Quadtree {
   private:
-	raylib::Rectangle bounds;
-	uint8_t depth;
-	raylib::Color color;
-	std::mutex mutex;
-
-#ifdef QUADTREE_GRID
-	std::unordered_map<int, std::vector<std::shared_ptr<Object>>> grid;
-#else
 	std::vector<std::shared_ptr<Object>> children;
 	std::vector<std::shared_ptr<Quadtree>> quadrants;
-#endif
+	raylib::Rectangle bounds;
+	raylib::Color color;
+	uint8_t depth;
 
 	bool isLeaf();
 	void split();
