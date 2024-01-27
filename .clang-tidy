@@ -1,0 +1,12 @@
+# Clang-tidy configuration file.
+
+Checks: |
+    modernize-*,
+    -modernize-use-trailing-return-type
+
+# Use header filter to only apply checks to files in the src directory
+HeaderFilterRegex: src/core/.*
+
+SystemHeaders: false
+
+# Ignore specific checks like modernize-use-trailing-return-type
