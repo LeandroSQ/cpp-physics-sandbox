@@ -1,0 +1,17 @@
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = false
+trim_trailing_whitespace = true
+spaces_before_comment = 2
+indent_size = 4
+indent_style = space
+max_line_length = 200
+
+[*.md]
+trim_trailing_whitespace = false
+max_line_length = 0
+
+[*.{yml,yaml}]
+indent_size = 2
+indent_style = space
