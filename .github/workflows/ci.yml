@@ -38,6 +38,16 @@ jobs:
         uses: mymindstorm/setup-emsdk@v14
         with:
           version: 3.1.51
+      - name: Export Emscripten environment (Unix)
+        if: matrix.target == 'web' && matrix.os != 'windows-latest'
+        run: |
+          export EMSDK_ROOT=$EMSDK/upstream/emscripten
+          export EMSDK_INCLUDE_ROOT=$EMSDK/upstream/emscripten/system/include
+      - name: Export Emscripten environment (Windows)
+        if: matrix.target == 'web' && matrix.os == 'windows-latest'
+        run: |
+          $env:EMSDK_ROOT = $env:EMSDK/upstream/emscripten
+          $env:EMSDK_INCLUDE_ROOT = $env:EMSDK/upstream/emscripten/system/include
 
       - name: Configure
         run: cmake --preset=${{ matrix.target }}-release
