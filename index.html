@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" class="is-dark">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>WASM</title>
+
+        <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+
+        <link href="https://unpkg.com/nes.css@2.3.0/css/nes.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="style.css">
+
+        <link rel="preload" href="sandbox.js" as="script">
+        <link rel="preload" href="sandbox.wasm" as="fetch" type="application/wasm" crossorigin="anonymous">
+    </head>
+    <body>
+        <section id="content" class="nes-container with-title">
+            <h3 class="title">Content</h3>
+            <div id="canvas-container" class="item">
+                <div id="progress-indicator">
+                    <progress class="nes-progress is-primary"></progress>
+                    <span class="nes-text">Loading data, please wait.</span>
+                </div>
+                <canvas id="canvas" class="emscripten hidden"></canvas>
+                <div id="controls" class="hidden">
+                    <button type="button" class="nes-btn is-primary" onclick="onBtnFullscreenClick()">Fullscreen</button>
+                    <button type="button" class="nes-btn is-warning" onclick="onBtnRestartClick()">Restart</button>
+                    <button type="button" class="nes-btn is-error" onclick="onBtnKillClick()">Kill</button>
+                </div>
+            </div>
+        </section>
+
+        <dialog class="nes-dialog is-rounded" id="modal">
+            <form method="dialog">
+                <h1 class="title">Attention!</h1>
+
+                <p class="message"></p>
+
+                <menu class="dialog-menu">
+                    <button class="nes-btn is-primary">OK</button>
+                </menu>
+            </form>
+        </dialog>
+
+        <script src="script.js"></script>
+        <script async src="sandbox.js"></script>
+    </body>
+</html>
