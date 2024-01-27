@@ -19,6 +19,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Setup Ubuntu
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xorg-dev libglu1-mesa-dev
+
       - name: Setup CMake and Ninja
         uses: lukka/get-cmake@latest
         with:
