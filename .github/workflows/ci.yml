@@ -34,7 +34,7 @@ jobs:
           version: 3.1.51
 
       - name: Configure
-        run: cmake --preset=${{ matrix.os }}-${{ matrix.target }}-release
+        run: cmake --preset=${{ matrix.target }}-release
 
       - name: Build
         run: cmake --build ./build/${{ matrix.target }} --target=all
