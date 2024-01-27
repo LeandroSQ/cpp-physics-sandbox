@@ -42,7 +42,7 @@ jobs:
         if: matrix.target == 'web'
         run: |
           echo "EMSDK_ROOT=$EMSDK/upstream/emscripten" >> $GITHUB_ENV
-          echo "EMSDK_INCLUDE_ROOT=$EMSDK/upstream/emscripten/system/include" >> $GITHUB_ENV
+          echo "EMSDK_INCLUDE_ROOT=$EMSDK/upstream/emscripten/cache/sysroot/include" >> $GITHUB_ENV
 
       - name: Configure
         run: cmake --preset=${{ matrix.target }}-release
