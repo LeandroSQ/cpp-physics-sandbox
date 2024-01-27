@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        target: [web]
+        target: [desktop, web]
 
     runs-on: ${{ matrix.os }}
 
@@ -38,14 +38,34 @@ jobs:
         uses: mymindstorm/setup-emsdk@v14
         with:
           version: 3.1.51
-      - name: Export Emscripten environment
-        if: matrix.target == 'web'
+      - name: Export Emscripten environment (Unix)
+        if: matrix.target == 'web' && matrix.os != 'windows-latest'
         run: |
           echo "EMSDK_ROOT=$EMSDK/upstream/emscripten" >> $GITHUB_ENV
           echo "EMSDK_INCLUDE_ROOT=$EMSDK/upstream/emscripten/cache/sysroot/include" >> $GITHUB_ENV
+      - name: Export Emscripten environment (Windows)
+        if: matrix.target == 'web' && matrix.os == 'windows-latest'
+        run: |
+          echo "EMSDK_ROOT=$EMSDK/upstream/emscripten" >> $env:GITHUB_ENV
+          echo "EMSDK_INCLUDE_ROOT=$EMSDK/upstream/emscripten/cache/sysroot/include" >> $env:GITHUB_ENV
 
       - name: Configure
         run: cmake --preset=${{ matrix.target }}-release
 
       - name: Build
         run: cmake --build ./build/${{ matrix.target }} --target=all
+
+      - name: Copy WASM module (Ubuntu)
+        if: matrix.target == 'web' && matrix.os == 'ubuntu-latest'
+        run: |
+          cp ./build/web/sandbox.wasm ./src/web
+          cp ./build/web/sandbox.js ./src/web
+          cp ./build/web/sandbox.html ./src/web
+
+      - name: Deploy to GitHub Pages (Ubuntu)
+        if: matrix.target == 'web' && matrix.os == 'ubuntu-latest'
+        uses: JamesIves/github-pages-deploy-action@v4.5.0
+        with:
+          branch: gh-pages
+          folder: src/web
+          clean: true
