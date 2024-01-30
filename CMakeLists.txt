@@ -8,6 +8,15 @@ function(dump_info)
     message(STATUS "CMAKE_CXX_COMPILER_ID: ${CMAKE_CXX_COMPILER_ID}")
     message(STATUS "CMAKE_C_COMPILER_VERSION: ${CMAKE_C_COMPILER_VERSION}")
     message(STATUS "CMAKE_CXX_COMPILER_VERSION: ${CMAKE_CXX_COMPILER_VERSION}")
+
+    if(WIN32)
+        message(STATUS "OS: WIN32")
+    elseif(APPLE)
+        message(STATUS "OS: APPLE")
+    elseif(UNIX)
+        message(STATUS "OS: LINUX")
+    endif()
+
 endfunction()
 
 function(define_project_variables)
@@ -106,7 +115,9 @@ endif()
 # Source files
 file(GLOB_RECURSE SOURCES "src/core/*.cpp" "src/core/*.hpp")
 set(PRECOMPILED_HEADERS "src/core/precomp.hpp")
-if(WIN32 OR APPLE) # If not GCC/G++
+if(UNIX AND NOT APPLE)
+    set(CMAKE_PCH_INSTANTIATE_TEMPLATES OFF)
+else()
     set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 endif()
 
