@@ -41,7 +41,8 @@ jobs:
         uses: mymindstorm/setup-emsdk@v14
         with:
           version: 3.1.51
-      - name: Export Emscripten environment (Unix)
+      - name: Export Emscripten environment
+        shell: bash
         if: matrix.target == 'web' && matrix.os != 'windows-latest'
         run: |
           echo "EMSDK_ROOT=$EMSDK/upstream/emscripten" >> $GITHUB_ENV
@@ -52,8 +53,25 @@ jobs:
           echo "EMSDK_ROOT=$EMSDK/upstream/emscripten" >> $env:GITHUB_ENV
           echo "EMSDK_INCLUDE_ROOT=$EMSDK/upstream/emscripten/cache/sysroot/include" >> $env:GITHUB_ENV
 
+      - name: Define compiler
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            echo "CXX=g++" >> $GITHUB_ENV
+            echo "CC=gcc" >> $GITHUB_ENV
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            echo "CXX=clang++" >> $GITHUB_ENV
+            echo "CC=clang" >> $GITHUB_ENV
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+            echo "CXX=cl" >> $GITHUB_ENV
+            echo "CC=cl" >> $GITHUB_ENV
+          else
+            echo "Unknown OS"
+            exit 1
+          fi
+
       - name: Configure
-        run: cmake --preset=${{ matrix.target }}-release
+        run: cmake --preset=${{ matrix.target }}-release -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX
 
       - name: Build
         run: cmake --build ./build --target=all
