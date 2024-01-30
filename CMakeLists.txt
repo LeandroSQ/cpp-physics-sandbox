@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.18.0)
 set(PROJECT_NAME sandbox)
 
 function(dump_info)
+    message(STATUS "CMAKE_SYSTEM: ${CMAKE_SYSTEM}")
     message(STATUS "CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}")
     message(STATUS "CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
     message(STATUS "CMAKE_C_COMPILER_ID: ${CMAKE_C_COMPILER_ID}")
@@ -9,8 +10,16 @@ function(dump_info)
     message(STATUS "CMAKE_C_COMPILER_VERSION: ${CMAKE_C_COMPILER_VERSION}")
     message(STATUS "CMAKE_CXX_COMPILER_VERSION: ${CMAKE_CXX_COMPILER_VERSION}")
 
-    if(UNIX AND NOT APPLE)
-        set(LINUX ON)
+    if((UNIX AND NOT APPLE) OR ${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR CMAKE_SYSTEM MATCHES "Linux")
+        set(LINUX TRUE)
+    endif()
+
+    if(NOT WIN32 AND (MSVC OR MSYS OR MINGW) OR ${CMAKE_SYSTEM_NAME} STREQUAL "Windows" OR CMAKE_SYSTEM MATCHES "Windows")
+        set(WIN32 TRUE)
+    endif()
+
+    if(NOT APPLE AND (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin" OR CMAKE_SYSTEM MATCHES "Darwin"))
+        set(APPLE TRUE)
     endif()
 
     if(WIN32)
