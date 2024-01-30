@@ -28,6 +28,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y xorg-dev libglu1-mesa-dev
 
+      - name: Enable Developer Command Prompt (Windows)
+        if: matrix.os == 'windows-latest'
+        uses: ilammy/msvc-dev-cmd@v1
+
       - name: Setup CMake and Ninja
         uses: lukka/get-cmake@latest
         with:
