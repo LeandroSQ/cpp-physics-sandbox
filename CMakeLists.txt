@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 3.18.0)
 set(PROJECT_NAME sandbox)
 
-# Print information about the current platform
-message("CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}")
-message("CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
-message("CMAKE_C_COMPILER_ID: ${CMAKE_C_COMPILER_ID}")
-message("CMAKE_CXX_COMPILER_ID: ${CMAKE_CXX_COMPILER_ID}")
-message("CMAKE_C_COMPILER_VERSION: ${CMAKE_C_COMPILER_VERSION}")
-message("CMAKE_CXX_COMPILER_VERSION: ${CMAKE_CXX_COMPILER_VERSION}")
+function(dump_info)
+    message(STATUS "CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}")
+    message(STATUS "CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
+    message(STATUS "CMAKE_C_COMPILER_ID: ${CMAKE_C_COMPILER_ID}")
+    message(STATUS "CMAKE_CXX_COMPILER_ID: ${CMAKE_CXX_COMPILER_ID}")
+    message(STATUS "CMAKE_C_COMPILER_VERSION: ${CMAKE_C_COMPILER_VERSION}")
+    message(STATUS "CMAKE_CXX_COMPILER_VERSION: ${CMAKE_CXX_COMPILER_VERSION}")
+endfunction()
 
 function(define_project_variables)
     # https://stackoverflow.com/questions/10851247/how-to-activate-c-11-in-cmake
@@ -82,15 +83,17 @@ function(define_target_properties target)
         endforeach()
     endif()
 
-    # For GCC/G++
-    # if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")# If GCC/G++
         set_target_properties(${PROJECT_NAME} PROPERTIES PCH_WARN_INVALID OFF)
-    # endif()
+    endif()
 endfunction()
 
 # Define project
 define_project_variables()
 project(${PROJECT_NAME})
+
+# Print information about the current platform
+dump_info()
 
 if(PLATFORM STREQUAL "Web")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY -s GL_ENABLE_GET_PROC_ADDRESS=1")
@@ -103,7 +106,9 @@ endif()
 # Source files
 file(GLOB_RECURSE SOURCES "src/core/*.cpp" "src/core/*.hpp")
 set(PRECOMPILED_HEADERS "src/core/precomp.hpp")
-set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
+if(NOT CMAKE_CXX_COMPILER_ID MATCHES "GNU") # If not GCC/G++
+    set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
+endif()
 
 # Dependencies
 add_subdirectory(lib)
