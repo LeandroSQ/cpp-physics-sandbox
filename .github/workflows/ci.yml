@@ -58,6 +58,7 @@ jobs:
           echo "EMSDK_INCLUDE_ROOT=$EMSDK/upstream/emscripten/cache/sysroot/include" >> $env:GITHUB_ENV
 
       - name: Define compiler
+        if: matrix.os != 'ubuntu-latest' || matrix.target == 'desktop'
         shell: bash
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then

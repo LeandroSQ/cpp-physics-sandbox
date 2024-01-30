@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.18.0)
 set(PROJECT_NAME sandbox)
 
+if(UNIX AND NOT APPLE)
+    set(LINUX ON)
+endif()
+
 function(dump_info)
     message(STATUS "CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}")
     message(STATUS "CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
@@ -13,7 +17,7 @@ function(dump_info)
         message(STATUS "OS: WIN32")
     elseif(APPLE)
         message(STATUS "OS: APPLE")
-    elseif(UNIX)
+    elseif(LINUX)
         message(STATUS "OS: LINUX")
     endif()
 
@@ -58,7 +62,9 @@ function(define_target_properties target)
     target_compile_features(${target} PRIVATE cxx_std_23)
 
     # Precompiled headers
-    target_precompile_headers(${target} PRIVATE ${PRECOMPILED_HEADERS})
+    if(NOT LINUX)
+        target_precompile_headers(${target} PRIVATE ${PRECOMPILED_HEADERS})
+    endif()
 
     # Link dependencies
     target_link_libraries(${target} raylib)
@@ -115,9 +121,7 @@ endif()
 # Source files
 file(GLOB_RECURSE SOURCES "src/core/*.cpp" "src/core/*.hpp")
 set(PRECOMPILED_HEADERS "src/core/precomp.hpp")
-if(UNIX AND NOT APPLE)
-    set(CMAKE_PCH_INSTANTIATE_TEMPLATES OFF)
-else()
+if(NOT LINUX)
     set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 endif()
 
