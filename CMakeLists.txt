@@ -55,7 +55,9 @@ function(define_project_variables)
         add_definitions(-DRELEASE)
     endif()
 
-    set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+    if(NOT CI)
+        set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+    endif()
 
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
     set(CMAKE_C_STANDARD 11)
@@ -75,7 +77,7 @@ function(define_target_properties target)
     target_compile_features(${target} PRIVATE cxx_std_23)
 
     # Precompiled headers
-    if(NOT LINUX)
+    if(NOT LINUX OR NOT PLATFORM STREQUAL "Web")
         target_precompile_headers(${target} PRIVATE ${PRECOMPILED_HEADERS})
     endif()
 
@@ -96,22 +98,14 @@ function(define_target_properties target)
 
         # https://github.com/clangd/clangd/issues/1621#issuecomment-1703330511
         # Fix for generating compile_commands.json for clangd
-        execute_process(COMMAND em++ --cflags OUTPUT_VARIABLE EM_CFLAGS)
-        set_target_properties(${target} PROPERTIES COMPILE_FLAGS "${EM_CFLAGS}")
-
-        # Add post build command to eplace "./src/web/sandbox.*" with "./build/sandbox.*" files
-        file(GLOB WEB_FILES "${CMAKE_CURRENT_BINARY_DIR}/sandbox.*")
-        foreach(WEB_FILE ${WEB_FILES})
-            get_filename_component(WEB_FILE_NAME ${WEB_FILE} NAME)
-            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${WEB_FILE}
-                ${CMAKE_CURRENT_SOURCE_DIR}/src/web/${WEB_FILE_NAME}
-            )
-        endforeach()
+        # Ignore if on github actions runner
+        if(NOT CI)
+            execute_process(COMMAND em++ --cflags OUTPUT_VARIABLE EM_CFLAGS)
+            set_target_properties(${target} PROPERTIES COMPILE_FLAGS "${EM_CFLAGS}")
+        endif()
     endif()
 
-    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR (UNIX AND NOT APPLE))# If GCC/G++
+    if(LINX AND PLATFORM STREQUAL "Web")
         set_target_properties(${PROJECT_NAME} PROPERTIES PCH_WARN_INVALID OFF)
     endif()
 endfunction()
@@ -134,7 +128,7 @@ endif()
 # Source files
 file(GLOB_RECURSE SOURCES "src/core/*.cpp" "src/core/*.hpp")
 set(PRECOMPILED_HEADERS "src/core/precomp.hpp")
-if(LINUX)
+if(LINUX AND PLATFORM STREQUAL "Web")
     set(CMAKE_PCH_INSTANTIATE_TEMPLATES OFF)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-pch-instantiate-templates")
 else()
