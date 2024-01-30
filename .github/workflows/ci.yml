@@ -71,6 +71,7 @@ jobs:
           fi
 
       - name: Configure
+        shell: bash
         run: cmake --preset=${{ matrix.target }}-release -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX
 
       - name: Build
