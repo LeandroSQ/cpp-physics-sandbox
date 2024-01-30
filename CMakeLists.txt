@@ -83,7 +83,7 @@ function(define_target_properties target)
         endforeach()
     endif()
 
-    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")# If GCC/G++
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR (UNIX AND NOT APPLE))# If GCC/G++
         set_target_properties(${PROJECT_NAME} PROPERTIES PCH_WARN_INVALID OFF)
     endif()
 endfunction()
@@ -106,7 +106,7 @@ endif()
 # Source files
 file(GLOB_RECURSE SOURCES "src/core/*.cpp" "src/core/*.hpp")
 set(PRECOMPILED_HEADERS "src/core/precomp.hpp")
-if(NOT CMAKE_CXX_COMPILER_ID MATCHES "GNU") # If not GCC/G++
+if(WIN32 OR APPLE) # If not GCC/G++
     set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 endif()
 

@@ -26,7 +26,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y xorg-dev libglu1-mesa-dev
+          sudo apt-get install -y xorg-dev libglu1-mesa-dev gcc g++
 
       - name: Enable Developer Command Prompt (Windows)
         if: matrix.os == 'windows-latest'
