@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15.0)
+cmake_minimum_required(VERSION 3.18.0)
 set(PROJECT_NAME sandbox)
 
 function(define_project_variables)
@@ -72,6 +72,11 @@ function(define_target_properties target)
                 ${CMAKE_CURRENT_SOURCE_DIR}/src/web/${WEB_FILE_NAME}
             )
         endforeach()
+    endif()
+
+    # For GCC/G++
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+        set_target_properties(${PROJECT_NAME} PROPERTIES PCH_WARN_INVALID OFF)
     endif()
 endfunction()
 
