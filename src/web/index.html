@@ -16,12 +16,14 @@
     <body>
         <section id="content" class="nes-container with-title">
             <h3 class="title">Content</h3>
-            <div id="canvas-container" class="item">
+            <div id="content-inner" class="item">
                 <div id="progress-indicator">
                     <progress class="nes-progress is-primary"></progress>
                     <span class="nes-text">Loading data, please wait.</span>
                 </div>
-                <canvas id="canvas" class="emscripten hidden"></canvas>
+                <div id="canvas-container">
+                    <canvas id="canvas" class="emscripten hidden"></canvas>
+                </div>
                 <div id="controls" class="hidden">
                     <button type="button" class="nes-btn is-primary" onclick="onBtnFullscreenClick()">Fullscreen</button>
                     <button type="button" class="nes-btn is-warning" onclick="onBtnRestartClick()">Restart</button>

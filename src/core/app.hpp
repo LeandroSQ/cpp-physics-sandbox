@@ -3,15 +3,15 @@
 #include "precomp.hpp"
 #include "quadtree.hpp"
 #include "solver.hpp"
-#include "spawner.hpp"
+#include "interation_handler.hpp"
 
 class App {
   private:
     Quadtree quadtree;
     Solver solver;
-    Spawner spawner;
+    InterationHandler spawner;
     Camera2D camera;
-    bool isRenderingQuadtree = true;
+    bool isRenderingQuadtree;
 
     void handleInput(float deltaTime);
     void renderGUI();

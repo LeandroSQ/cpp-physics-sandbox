@@ -1,6 +1,6 @@
 #include "constants.hpp"
 
-#ifndef QUADTREE_DUMMY
+#if !defined(QUADTREE_DUMMY) && !defined(QUADTREE_GRID)
 
 #include "quadtree.hpp"
 

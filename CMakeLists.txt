@@ -21,11 +21,6 @@ function(define_project_variables)
     endif()
 
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-    execute_process(
-        COMMAND ${CMAKE_COMMAND} -E create_symlink
-        ${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json
-        ${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json
-    )
 
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
     set(CMAKE_C_STANDARD 11)
@@ -60,7 +55,23 @@ function(define_target_properties target)
     endif()
 
     if(PLATFORM STREQUAL "Web") # Web Configurations
-        target_include_directories(${PROJECT_NAME} PRIVATE ${EMSDK_INCLUDE})
+        target_include_directories(${target} PUBLIC ${EMSDK_INCLUDE})
+
+        # https://github.com/clangd/clangd/issues/1621#issuecomment-1703330511
+        # Fix for generating compile_commands.json for clangd
+        execute_process(COMMAND em++ --cflags OUTPUT_VARIABLE EM_CFLAGS)
+        set_target_properties(${target} PROPERTIES COMPILE_FLAGS "${EM_CFLAGS}")
+
+        # Add post build command to eplace "./src/web/sandbox.*" with "./build/sandbox.*" files
+        file(GLOB WEB_FILES "${CMAKE_CURRENT_BINARY_DIR}/sandbox.*")
+        foreach(WEB_FILE ${WEB_FILES})
+            get_filename_component(WEB_FILE_NAME ${WEB_FILE} NAME)
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${WEB_FILE}
+                ${CMAKE_CURRENT_SOURCE_DIR}/src/web/${WEB_FILE_NAME}
+            )
+        endforeach()
     endif()
 endfunction()
 
@@ -71,11 +82,15 @@ project(${PROJECT_NAME})
 if(PLATFORM STREQUAL "Web")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY -s GL_ENABLE_GET_PROC_ADDRESS=1")
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
+
+    # Add ${EMSDK_INCLUDE} to include directories for compile_commands.json
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${EMSDK_INCLUDE} -I${CMAKE_SOURCE_DIR}/src/core")
 endif()
 
 # Source files
 file(GLOB_RECURSE SOURCES "src/core/*.cpp" "src/core/*.hpp")
 set(PRECOMPILED_HEADERS "src/core/precomp.hpp")
+set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 
 # Dependencies
 add_subdirectory(lib)
@@ -90,8 +105,7 @@ add_custom_target(${PROJECT_NAME}_lint
     COMMENT "Running clang-tidy"
     DEPENDS ${LINT_SOURCES}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-)
-# endregion
+)# endregion
 
 # region Clean
 add_custom_target(${PROJECT_NAME}_clean
@@ -99,7 +113,6 @@ add_custom_target(${PROJECT_NAME}_clean
     COMMENT "Running clean.sh"
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
-
 # endregion
 
 # region Testing

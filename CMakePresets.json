@@ -10,7 +10,7 @@
             "name": "desktop",
             "hidden": true,
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/desktop",
+            "binaryDir": "${sourceDir}/build",
             "cacheVariables": {
                 "PLATFORM": "Desktop",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
@@ -21,10 +21,10 @@
             "hidden": true,
             "toolchainFile": "/$env{EMSDK_ROOT}/cmake/Modules/Platform/Emscripten.cmake",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/web",
+            "binaryDir": "${sourceDir}/build",
             "cacheVariables": {
                 "PLATFORM": "Web",
-                "EMSDK_INCLUDE": "/$env{EMSDK_INCLUDE_ROOT}",
+                "EMSDK_INCLUDE": "$env{EMSDK_INCLUDE_ROOT}",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
             }
         },

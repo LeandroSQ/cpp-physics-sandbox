@@ -82,12 +82,24 @@
         "__availability": "cpp"
     },
     "cSpell.words": [
+        "emscripten",
         "Emscripten",
         "EMSDK",
+        "HIGHDPI",
+        "MSAA",
         "quadtree",
         "Quadtree",
         "raylib",
-        "SMPTE"
+        "SMPTE",
+        "substeps"
     ],
-    "cmake.configureOnOpen": false
+    "cmake.configureOnOpen": false,
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "clangd.path": "/usr/bin/clangd",
+    "clangd.arguments": [
+        "-pretty",
+        "-background-index",
+        "-log=verbose",
+        "-compile-commands-dir=${workspaceFolder}/build"
+    ]
 }

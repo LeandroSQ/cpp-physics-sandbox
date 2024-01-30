@@ -5,7 +5,8 @@
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     width: 100%;
     width: 100vw;
     width: 100dvw;
@@ -23,8 +24,10 @@ body {
     display: flex;
     place-content: center;
     place-items: center;
+    align-items: stretch;
 }
 
+/* #region Dialog */
 dialog {
     margin: auto;
     max-width: 50vw;
@@ -63,11 +66,9 @@ dialog button {
 dialog.is-error .title {
     color: #e76e55;
 }
+/* #endregion Dialog */
 
-.nes-container.with-title > .title {
-    margin: -2.3rem 0 1rem;
-}
-
+/* #region Progress */
 #progress-indicator {
     display: flex;
     flex-direction: column;
@@ -81,12 +82,12 @@ dialog.is-error .title {
     opacity: 0.5;
 }
 
-#progress-indicator progress:not([value]){
+#progress-indicator progress:not([value]) {
     position: relative;
     overflow: hidden;
 }
 #progress-indicator progress:not([value])::after {
-    content: '';
+    content: "";
     top: 0;
     left: 0;
     width: 50%;
@@ -104,49 +105,86 @@ dialog.is-error .title {
         transform: translateX(200%);
     }
 }
+/* #endregion */
+
+/* #region Layout */
+#content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin: 2rem;
+}
+
+#content-inner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+#canvas-container {
+    flex: 1;
+    position: relative;
+}
+
+canvas {
+    position: absolute;
+    /* top: 0; */
+    /* left: 0; */
+    /* width: 100%; */
+    /* height: 100%; */
+    background-color: black;
+}
 
 #controls {
     display: flex;
+    flex-direction: row;
     place-content: center;
-    place-items: center;
+    margin-top: 1.5rem;
     gap: 1rem;
-    margin-top: 1rem;
+}
+/* #endregion */
+
+/* #region Utility classes */
+.nes-container.with-title > .title {
+    width: fit-content;
+    margin: -2.3rem 0 1rem;
 }
 
 .hidden {
     display: none !important;
 }
+/* #endregion */
 
-/* Fullscreen center canvas */
-canvas:fullscreen {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
+/* #region View transitions */
 @keyframes fade-in {
-  from { opacity: 0; }
+    from {
+        opacity: 0;
+    }
 }
 
 @keyframes fade-out {
-  to { opacity: 0; }
+    to {
+        opacity: 0;
+    }
 }
 
 @keyframes slide-from-right {
-  from { transform: Scale(0.0, 0.0); }
+    from {
+        transform: Scale(0, 0);
+    }
 }
 
 @keyframes slide-to-left {
-  to { transform: Scale(1.0, 1.0); }
+    to {
+        transform: Scale(1, 1);
+    }
 }
 
 ::view-transition-old(root) {
-  animation: 90ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
-    300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
+    animation: 90ms cubic-bezier(0.4, 0, 1, 1) both fade-out, 300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
 }
 
 ::view-transition-new(root) {
-  animation: 210ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
-    300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;
+    animation: 210ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in, 300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;
 }
+/* #endregion */

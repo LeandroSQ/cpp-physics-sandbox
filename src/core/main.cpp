@@ -1,27 +1,12 @@
-#include "app.hpp"
 #include "precomp.hpp"
+#include "constants.hpp"
+#include "app.hpp"
 
 App app;
 
-#ifndef PLATFORM_WEB
-  bool resized = false;
-#endif
 
 void render() {
-#ifdef PLATFORM_WEB
-	if (IsWindowResized()) {
-		app.resize();
-	}
-#else
-	if (!resized && IsWindowResized()) {
-		// auto size = std::max(GetScreenWidth(), GetScreenHeight());
-		// SetWindowSize(size, size);
-		app.resize();
-		resized = true;
-	} else {
-		resized = false;
-	}
-#endif
+    if (IsWindowResized()) app.resize();
 
 	app.update();
 	BeginDrawing();
@@ -30,9 +15,13 @@ void render() {
 }
 
 int main() {
-	SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_WINDOW_RESIZABLE);
+	SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_HIGHDPI);
 
+#ifdef PLATFORM_WEB
 	InitWindow(WIDTH, HEIGHT, "Sandbox");
+#else
+	InitWindow(WIDTH, HEIGHT, "Sandbox");
+#endif
 	SetWindowMinSize(WIDTH, HEIGHT);
 
 	app.setup();

@@ -1,10 +1,11 @@
 #pragma once
 
+#include "Vector2.hpp"
 #include "precomp.hpp"
 #include "quadtree.hpp"
 #include "object.hpp"
 
-class Spawner {
+class InterationHandler {
   private:
     Quadtree &quadtree;
     std::vector<std::shared_ptr<Object>> draggingObjects;
@@ -13,10 +14,10 @@ class Spawner {
     float timer = 0.0f;
     bool isSpawning = true;
 
-    void spawn();
+    void spawn(raylib::Vector2 mouse);
 
   public:
-    Spawner(Quadtree &quadtree);
+    InterationHandler(Quadtree &quadtree);
 
-    void update(float deltaTime, bool consumeInput);
+    void update(raylib::Vector2 mouse, float deltaTime, bool consumeInput);
 };

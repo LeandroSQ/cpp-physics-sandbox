@@ -1,3 +1,15 @@
+/**
+ * @file quadtree_grid.cpp
+ * @author LeandroSQ
+ * @brief Spatial hash grid implementation for testing purposes
+ * @note This file is only compiled if QUADTREE_GRID is defined
+ *
+ * It implements a simple matrix of vectors, where each vector is a cell of the grid
+ * so queries are done by iterating over the cells that intersect the query range
+ * and do not require any kind of subdivision or multi-depth structure
+ * It exposes the same interface as the quadtree so it can be easily compared with it
+ */
+
 #include "constants.hpp"
 
 #ifdef QUADTREE_GRID

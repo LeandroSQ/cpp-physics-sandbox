@@ -1,4 +1,5 @@
 #include "solver.hpp"
+#include "constants.hpp"
 
 const float AIR_TEMPERATURE = 4000.0f;
 const float GROUND_TEMPERATURE = 10000.0f;

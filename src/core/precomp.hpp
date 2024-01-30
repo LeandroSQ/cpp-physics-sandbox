@@ -1,26 +1,25 @@
 #pragma once
 
-// #include <raylib.h>
-// #include <raymath.h>
-
+// Raylib
+#include <raylib.h>
 #include <raylib-cpp.hpp>
 
-#if defined(PLATFORM_WEB)
+// Emscripten
+#ifdef PLATFORM_WEB
  #include <emscripten/emscripten.h>
+ #include <emscripten/html5.h>
+#else
 #endif
 
+// GUI
+#include <imgui.h>
+#include <rlImGui.h>
+
+// STL
 #include <algorithm>
 #include <iostream>
 #include <memory>
 #include <cstdio>
 #include <string>
 #include <vector>
-
-#include "constants.hpp"
-#include "palette.hpp"
-
-#ifdef MULTI_THREADING
- #include <omp.h>
- #include <execution>
- #include <future>
-#endif
+#include <algorithm>

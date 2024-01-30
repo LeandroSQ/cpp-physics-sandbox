@@ -1,3 +1,13 @@
+/**
+ * @file quadtree_dummy.cpp
+ * @author LeandroSQ
+ * @brief Dummy quadtree implementation for testing purposes
+ * @note This file is only compiled if QUADTREE_DUMMY is defined
+ *
+ * This emulates the behavior of a vector but exposes the same interface as the quadtree
+ * so it can be easily compared with the actual quadtree implementation
+ */
+
 #include "constants.hpp"
 
 #ifdef QUADTREE_DUMMY

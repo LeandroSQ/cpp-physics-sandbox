@@ -1,4 +1,5 @@
 #include "object.hpp"
+#include "constants.hpp"
 
 Object::Object(raylib::Vector2 position, raylib::Vector2 acceleration, float mass, float radius, float temperature, raylib::Color color) {
 	this->position = position;

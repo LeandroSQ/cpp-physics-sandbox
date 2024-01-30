@@ -3,23 +3,32 @@
         {
             "name": "Mac",
             "includePath": [
-                "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include",
-                "${workspaceRoot}/src/core"
+                 "${workspaceRoot}/src/core"
             ],
             "defines": [],
             "intelliSenseMode": "macos-clang-arm64",
             "browse": {
                 "path": [
-                    "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include",
                     "${workspaceRoot}/src/core"
                 ],
                 "limitSymbolsToIncludedHeaders": true
             },
             "macFrameworkPath": [
+                "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks",
                 "/System/Library/Frameworks",
                 "/Library/Frameworks"
             ],
             "compilerPath": "/usr/bin/clang",
+            "compilerArgs": [
+                "-std=c++23",
+                "-I/opt/homebrew/opt/emscripten/libexec/cache/sysroot/include",
+                "-I/opt/homebrew/opt/emscripten/libexec/cache/sysroot/include/emscripten",
+                "-I/Users/leandroquevedo/Documents/Projects/C++/cpp-fire/lib/raylib-5.0/src",
+                "-I/Users/leandroquevedo/Documents/Projects/C++/cpp-fire/build/web/lib/raylib-5.0/raylib/include",
+                "-I/Users/leandroquevedo/Documents/Projects/C++/cpp-fire/lib/raylib_cpp-5.0.1/include",
+                "-I/Users/leandroquevedo/Documents/Projects/C++/cpp-fire/lib/dear_imgui-1.90.1",
+                "-I/Users/leandroquevedo/Documents/Projects/C++/cpp-fire/lib/rlimgui-main"
+            ],
             "cStandard": "c11",
             "cppStandard": "c++23",
             "compileCommands": "${workspaceFolder}/compile_commands.json"
