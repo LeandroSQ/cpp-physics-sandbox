@@ -136,6 +136,7 @@ file(GLOB_RECURSE SOURCES "src/core/*.cpp" "src/core/*.hpp")
 set(PRECOMPILED_HEADERS "src/core/precomp.hpp")
 if(LINUX)
     set(CMAKE_PCH_INSTANTIATE_TEMPLATES OFF)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-pch-instantiate-templates")
 else()
     set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 endif()
@@ -154,7 +155,6 @@ add_custom_target(${PROJECT_NAME}_lint
     DEPENDS ${LINT_SOURCES}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )# endregion
-
 # region Clean
 add_custom_target(${PROJECT_NAME}_clean
     COMMAND sh ${CMAKE_SOURCE_DIR}/scripts/clean.sh
