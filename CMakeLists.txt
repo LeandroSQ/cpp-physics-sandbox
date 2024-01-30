@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 3.18.0)
 set(PROJECT_NAME sandbox)
 
+# Print information about the current platform
+message("CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}")
+message("CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
+message("CMAKE_C_COMPILER_ID: ${CMAKE_C_COMPILER_ID}")
+message("CMAKE_CXX_COMPILER_ID: ${CMAKE_CXX_COMPILER_ID}")
+message("CMAKE_C_COMPILER_VERSION: ${CMAKE_C_COMPILER_VERSION}")
+message("CMAKE_CXX_COMPILER_VERSION: ${CMAKE_CXX_COMPILER_VERSION}")
+
 function(define_project_variables)
     # https://stackoverflow.com/questions/10851247/how-to-activate-c-11-in-cmake
     # Fix behavior of CMAKE_CXX_STANDARD when targeting macOS.
@@ -75,9 +83,9 @@ function(define_target_properties target)
     endif()
 
     # For GCC/G++
-    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    # if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
         set_target_properties(${PROJECT_NAME} PROPERTIES PCH_WARN_INVALID OFF)
-    endif()
+    # endif()
 endfunction()
 
 # Define project
