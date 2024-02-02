@@ -19,7 +19,7 @@
         {
             "name": "web",
             "hidden": true,
-            "toolchainFile": "/$env{EMSDK_ROOT}/cmake/Modules/Platform/Emscripten.cmake",
+            "toolchainFile": "$env{EMSDK_ROOT}/cmake/Modules/Platform/Emscripten.cmake",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build",
             "cacheVariables": {

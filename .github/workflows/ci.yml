@@ -54,8 +54,8 @@ jobs:
       - name: Export Emscripten environment (Windows)
         if: matrix.target == 'web' && matrix.os == 'windows-latest'
         run: |
-          echo "EMSDK_ROOT=$EMSDK/upstream/emscripten" >> $env:GITHUB_ENV
-          echo "EMSDK_INCLUDE_ROOT=$EMSDK/upstream/emscripten/cache/sysroot/include" >> $env:GITHUB_ENV
+          echo "EMSDK_ROOT='$EMSDK\\upstream\\emscripten'" >> $env:GITHUB_ENV
+          echo "EMSDK_INCLUDE_ROOT='$EMSDK\\upstream\\emscripten\\cache\\sysroot\\include'" >> $env:GITHUB_ENV
 
       - name: Define compiler
         if: matrix.os != 'ubuntu-latest' || matrix.target == 'desktop'
