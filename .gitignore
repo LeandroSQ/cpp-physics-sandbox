@@ -4,3 +4,4 @@ imgui.ini
 compile_commands.json
 .DS_Store
 src/web/sandbox.*
+.cache

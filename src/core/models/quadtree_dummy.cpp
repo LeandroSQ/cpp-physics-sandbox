@@ -8,11 +8,10 @@
  * so it can be easily compared with the actual quadtree implementation
  */
 
-#include "constants.hpp"
-
 #ifdef QUADTREE_DUMMY
 
 #include "quadtree.hpp"
+#include "../settings.hpp"
 
 Quadtree::Quadtree(raylib::Rectangle bounds, uint8_t depth) : bounds(bounds), depth(depth) { }
 

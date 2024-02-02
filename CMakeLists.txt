@@ -82,10 +82,7 @@ function(define_target_properties target)
     endif()
 
     # Link dependencies
-    target_link_libraries(${target} raylib)
-    target_link_libraries(${target} raylib_cpp)
-    target_link_libraries(${target} dear_imgui)
-    target_link_libraries(${target} rlimgui)
+    target_link_libraries(${target} raylib raylib_cpp dear_imgui rlimgui)
 
     if(APPLE) # Checks if OSX and links appropriate frameworks (Only required on MacOS)
         target_link_libraries(${target} "-framework IOKit")

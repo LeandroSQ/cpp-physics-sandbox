@@ -1,16 +1,19 @@
 #include "precomp.hpp"
-#include "constants.hpp"
-#include "app.hpp"
+#include "settings.hpp"
+#include "models/app.hpp"
 
 App app;
-
 
 void render() {
     if (IsWindowResized()) app.resize();
 
+    float start = GetTime();
+    app.onFrameStart();
+
 	app.update();
 	BeginDrawing();
 	app.render();
+    app.onFrameEnd();
 	EndDrawing();
 }
 

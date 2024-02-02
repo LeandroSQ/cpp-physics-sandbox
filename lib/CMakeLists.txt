@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.15.0)
 set(TEMP_PATH ${CMAKE_CURRENT_SOURCE_DIR}/temp)
 set(INSTALL_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
-# Function to download and include a library, given name, version and source
+# Function to download and include a library, given name, version/revision and source
 function(include_library name version source)
     # Check if the provided version is valid 0.0.0 format, useful for branches or commits
     string(REGEX MATCH "^[0-9]+\\.[0-9]+(\\.[0-9]+)?$" version_match ${version})
@@ -50,12 +50,19 @@ function(include_library name version source)
             message(STATUS "Moving library ${name} ${version} to ${INSTALL_PATH}/${name}-${version}")
             file(GLOB children RELATIVE ${TEMP_PATH}/${name}-${version} ${TEMP_PATH}/${name}-${version}/*)
             list(LENGTH children children_length)
+            # Remove if exists
+            if (EXISTS ${INSTALL_PATH}/${name}-${version})
+                file(REMOVE_RECURSE ${INSTALL_PATH}/${name}-${version})
+            endif()
             file(MAKE_DIRECTORY ${INSTALL_PATH}/${name}-${version})
+            message(STATUS "Children: ${children}")
             if (children_length EQUAL 1)
                 # Move everything inside the top level folder to the install path
+                message(STATUS "Moving everything inside the top level folder to the install path. From ${TEMP_PATH}/${name}-${version}/${children} to ${INSTALL_PATH}/${name}-${version}")
                 file(RENAME ${TEMP_PATH}/${name}-${version}/${children} ${INSTALL_PATH}/${name}-${version})
             else()
                 # Move everything to the install path
+                message(STATUS "Moving everything to the install path. From ${TEMP_PATH}/${name}-${version} to ${INSTALL_PATH}/${name}-${version}")
                 file(RENAME ${TEMP_PATH}/${name}-${version} ${INSTALL_PATH}/${name}-${version})
             endif()
             file(REMOVE_RECURSE ${TEMP_PATH}/${name}-${version})
@@ -114,5 +121,5 @@ target_compile_definitions(rlimgui PRIVATE NO_FONT_AWESOME)
 target_link_libraries(rlimgui dear_imgui raylib)
 
 # Clean
-message(STATUS "Removing temporary files")
+# message(STATUS "Removing temporary files")
 # file(REMOVE_RECURSE ${TEMP_PATH})

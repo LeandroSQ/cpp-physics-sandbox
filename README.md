@@ -40,6 +40,8 @@ You can check the WEB version [here](https://leandrosq.github.io/cpp-physics-san
 
 > <img src=".github/images/Space_Key_Dark.png" align="center" height="32"> `Space bar` to flip the Gravity vector
 
+> <img src=".github/images/Z_Key_Dark.png" align="center" height="32"> `Z` to toggle Gravity ON/OFF
+
 > <img src=".github/images/Arrow_Up_Key_Dark.png" align="center" height="32"> `Up arrow` to increase the Gravity force
 
 > <img src=".github/images/Arrow_Down_Key_Dark.png" align="center" height="32"> `Down arrow` to decrease the Gravity force

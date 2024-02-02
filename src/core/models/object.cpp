@@ -1,5 +1,6 @@
 #include "object.hpp"
-#include "constants.hpp"
+#include "../settings.hpp"
+#include "../utils.hpp"
 
 Object::Object(raylib::Vector2 position, raylib::Vector2 acceleration, float mass, float radius, float temperature, raylib::Color color) {
 	this->position = position;
@@ -50,10 +51,14 @@ raylib::Color getColorFromTemperature(float temperature) {
 }
 
 void Object::render() {
-	if constexpr (ENABLE_TEMPERATURE)
+	if  (ENABLE_TEMPERATURE) {
 		position.DrawCircle(radius, getColorFromTemperature(temperature));
-	else
+    } else if  (ENABLE_FIXED_RAINBOW) {
+        const int hue = (position.y / ((float)GetScreenHeight() / 2.0f)) * 240.0f;
+		DrawCircleV(position, radius, raylib::Color(raylib::Vector3(hue, 1.0f, 1.0f)));
+    } else {
 		DrawCircleV(position, radius, color);
+    }
 }
 
 raylib::Rectangle Object::getBounds() {

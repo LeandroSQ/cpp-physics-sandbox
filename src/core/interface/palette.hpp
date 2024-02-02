@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Color.hpp"
-#include <raylib-cpp.hpp>
+#include "../precomp.hpp"
 
 const raylib::Color PALETTE_RED = raylib::Color(231, 76, 60);
 const raylib::Color PALETTE_BLUE = raylib::Color(15, 188, 249);

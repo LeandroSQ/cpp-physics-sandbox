@@ -1,12 +1,10 @@
-#include "Vector2.hpp"
 #include "interation_handler.hpp"
-#include "constants.hpp"
-#include "palette.hpp"
-#include "raylib.h"
+#include "../settings.hpp"
+#include "../interface/palette.hpp"
 
 InterationHandler::InterationHandler(Quadtree &quadtree) : quadtree(quadtree) { }
 
-void InterationHandler::spawn(raylib::Vector2 mouse) {
+void InterationHandler::spawn(raylib::Vector2 mouse, uint8_t substeps) {
     const int count = 4;
     const float mass = 100.0f;
     const float temperature = 0.0f;
@@ -16,16 +14,15 @@ void InterationHandler::spawn(raylib::Vector2 mouse) {
     for (int i = 0; i < count; i++) {
         if (isSpawning) {
             position = raylib::Vector2(WIDTH / 2.0f, CENTER_CIRCLE_RADIUS / 2.0f);
-            acceleration = raylib::Vector2(cosf(angle), sinf(angle) * 0.5f) * 2000.0f * mass;
+            acceleration = (raylib::Vector2(cosf(angle), sinf(angle) * 0.5f) * 500.0f * mass) * (float)substeps;
         } else {
             position = mouse;
         }
 
-
         position.x += i * (OBJECT_RADIUS * 2.5f) - (count - 1) * (OBJECT_RADIUS * 1.5f);
 
         raylib::Color color;
-        if constexpr (ENABLE_RAINBOW) {
+        if  (ENABLE_RAINBOW_COLORS) {
             color = raylib::Color(raylib::Vector3((quadtree.size() % 361 / 360.0f) * 360.0f, 1.0f, 1.0f));
         } else {
             color = PALETTE_BLUE;
@@ -36,17 +33,17 @@ void InterationHandler::spawn(raylib::Vector2 mouse) {
     }
 }
 
-void InterationHandler::update(raylib::Vector2 mouse, float deltaTime, bool consumeInput) {
+void InterationHandler::update(raylib::Vector2 mouse, uint8_t substeps, float deltaTime, bool consumeInput) {
     if (isSpawning) {
         timer += deltaTime;
         if (timer >= SPAWN_INTERVAL) {
             timer -= SPAWN_INTERVAL;
-            if constexpr (ENABLE_SPAWN_SPREAD)
-                angle = sinf(GetTime()) * 0.25f * PI + 0.5f * PI;
+            if  (ENABLE_SPAWN_SPREAD)
+                angle = Lerp(angle, sinf(GetTime()) * 0.25f * PI + 0.5f * PI, deltaTime * 10);
             else
-                angle = 0.5f * PI;
+                angle = Lerp(angle, 0.5f * PI, deltaTime * 10);
 
-            spawn(raylib::Vector2::Zero());
+            spawn(raylib::Vector2::Zero(), substeps);
 
             if (quadtree.size() >= SPAWN_COUNT) {
                 isSpawning = false;
@@ -59,20 +56,21 @@ void InterationHandler::update(raylib::Vector2 mouse, float deltaTime, bool cons
 
     if (!consumeInput) return;
 
-    if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
-        spawn(mouse);
+    // Manual spawn
+    if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {// Click
+        spawn(mouse, substeps);
         timer = 0;
-    } else if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+    } else if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {// Hold
         timer += deltaTime;
         if (timer >= MANUAL_SPAWN_INTERVAL) {
             timer -= MANUAL_SPAWN_INTERVAL;
-            spawn(mouse);
+            spawn(mouse, substeps);
         }
     }
 
     if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON)) {// Dragging
         if (draggingObjects.size() == 0) {
-            constexpr float OBJECT_RADIUS = 50.0f;
+             float OBJECT_RADIUS = 50.0f;
             auto objects = quadtree.query(raylib::Rectangle{ mouse.x - OBJECT_RADIUS, mouse.y - OBJECT_RADIUS, OBJECT_RADIUS * 2.0f, OBJECT_RADIUS * 2.0f });
 
             for (auto object : objects) {

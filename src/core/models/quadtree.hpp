@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../precomp.hpp"
 #include "object.hpp"
-#include "precomp.hpp"
 
 class Object;
 class Quadtree;

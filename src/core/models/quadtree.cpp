@@ -1,8 +1,8 @@
-#include "constants.hpp"
 
 #if !defined(QUADTREE_DUMMY) && !defined(QUADTREE_GRID)
 
 #include "quadtree.hpp"
+#include "../settings.hpp"
 
 Quadtree::Quadtree(raylib::Rectangle bounds, uint8_t depth) : bounds(bounds), depth(depth) {
     color = raylib::Color {

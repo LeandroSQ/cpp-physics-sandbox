@@ -10,10 +10,11 @@
  * It exposes the same interface as the quadtree so it can be easily compared with it
  */
 
-#include "constants.hpp"
 
 #ifdef QUADTREE_GRID
+
 #include "quadtree.hpp"
+#include "../settings.hpp"
 
 // Although it says "Quadtree" this is but a spatial grid
 

@@ -8,7 +8,6 @@
 #ifdef PLATFORM_WEB
  #include <emscripten/emscripten.h>
  #include <emscripten/html5.h>
-#else
 #endif
 
 // GUI

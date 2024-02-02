@@ -1,6 +1,6 @@
 #pragma once
 
-#include "precomp.hpp"
+#include "../precomp.hpp"
 #include "quadtree.hpp"
 
 class Quadtree;
