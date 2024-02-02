@@ -59,7 +59,13 @@ function(include_library name version source)
             if (children_length EQUAL 1)
                 # Move everything inside the top level folder to the install path
                 message(STATUS "Moving everything inside the top level folder to the install path. From ${TEMP_PATH}/${name}-${version}/${children} to ${INSTALL_PATH}/${name}-${version}")
-                file(RENAME ${TEMP_PATH}/${name}-${version}/${children} ${INSTALL_PATH}/${name}-${version})
+                if(WIN32)
+                    # On Windows, RENAME yields in a "Access is denied" error, so we use INSTALL and then REMOVE_RECURSE
+                    file(INSTALL ${TEMP_PATH}/${name}-${version}/${children} DESTINATION ${INSTALL_PATH}/${name}-${version})
+                    file(REMOVE_RECURSE ${TEMP_PATH}/${name}-${version})
+                else()
+                    file(RENAME ${TEMP_PATH}/${name}-${version}/${children} ${INSTALL_PATH}/${name}-${version})
+                endif()
             else()
                 # Move everything to the install path
                 message(STATUS "Moving everything to the install path. From ${TEMP_PATH}/${name}-${version} to ${INSTALL_PATH}/${name}-${version}")
