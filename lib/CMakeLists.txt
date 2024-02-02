@@ -62,6 +62,13 @@ function(include_library name version source)
                 if(WIN32)
                     # On Windows, RENAME yields in a "Access is denied" error, so we use INSTALL and then REMOVE_RECURSE
                     file(COPY ${TEMP_PATH}/${name}-${version}/${children} DESTINATION ${INSTALL_PATH}/${name}-${version})
+
+                    # Show the contents of the folder
+                    file(GLOB children_inside ${INSTALL_PATH}/${name}-${version}/*)
+                    message(STATUS "Children install_path inside: ${children_inside}")
+                    file(GLOB children_inside_inside ${TEMP_PATH}/${name}-${version}/${children}/*)
+                    message(STATUS "Children temp_path inside inside: ${children_inside_inside}")
+
                     file(REMOVE_RECURSE ${TEMP_PATH}/${name}-${version})
                 else()
                     file(RENAME ${TEMP_PATH}/${name}-${version}/${children} ${INSTALL_PATH}/${name}-${version})

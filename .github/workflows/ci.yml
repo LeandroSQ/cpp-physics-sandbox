@@ -14,8 +14,10 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        target: [desktop, web]
+        os: [windows-latest]
+        target: [desktop]
+        # os: [ubuntu-latest, macos-latest, windows-latest]
+        # target: [desktop, web]
 
     runs-on: ${{ matrix.os }}
 
