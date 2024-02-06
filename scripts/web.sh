@@ -11,4 +11,4 @@ else
     exit 1
 fi
 
-cp ./build/web/sandbox.* ./src/web
+cp ./build/web/asteroids.* ./src/web

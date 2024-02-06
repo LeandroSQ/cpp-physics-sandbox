@@ -114,6 +114,7 @@ endfunction()
 
 # Dependencies
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(SUPPORT_RPRAND_GENERATOR ON)
 include_library(raylib 5.0 https://github.com/raysan5/raylib/archive/refs/tags/VERSION.tar.gz)
 
 set(BUILD_RAYLIB_CPP_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -121,7 +122,7 @@ include_library(raylib_cpp 5.0.1 https://github.com/RobLoach/raylib-cpp/archive/
 
 # include_library(raygui 4.0 https://github.com/raysan5/raygui/archive/refs/tags/VERSION.tar.gz)
 
-include_library(dear_imgui 1.90.1 https://github.com/ocornut/imgui/archive/refs/tags/vVERSION.tar.gz)
+include_library(dear_imgui docking https://github.com/ocornut/imgui/archive/refs/heads/VERSION.tar.gz)
 include_library(rlimgui main https://github.com/raylib-extras/rlimgui/archive/refs/heads/VERSION.tar.gz)
 target_compile_definitions(rlimgui PRIVATE NO_FONT_AWESOME)
 target_link_libraries(rlimgui dear_imgui raylib)

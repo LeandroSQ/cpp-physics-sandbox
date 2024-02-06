@@ -1,24 +1,40 @@
 #pragma once
 
+#include "Color.hpp"
 #include "precomp.hpp"
+#include "raylib.h"
 #include "settings.hpp"
+#include <climits>
 
-inline raylib::Vector2 getRelativeMousePosition() {
-    const auto dpi = GetWindowScaleDPI();
-    return raylib::Vector2(
-        std::clamp(GetMouseX() - GetScreenWidth() / 2.0f + WIDTH / 2.0f, 0.0f, (float)WIDTH),
-        std::clamp(GetMouseY() - GetScreenHeight() / 2.0f + HEIGHT / 2.0f, 0.0f, (float)HEIGHT)
+inline raylib::Vector2 rotateAround(raylib::Vector2 point, raylib::Vector2 center, float angle) {
+    return {
+        center.x + (point.x - center.x) * cosf(angle) - (point.y - center.y) * sinf(angle),
+        center.y + (point.x - center.x) * sinf(angle) + (point.y - center.y) * cosf(angle)
+    };
+}
+
+inline float getRandomValue(float min, float max) {
+    return GetRandomValue(0, RAND_MAX) / (float)RAND_MAX * (max - min) + min;
+}
+
+inline float smoothstep(float x) {
+    return x * x * (3 - 2 * x);
+}
+
+inline float easeInOutBack(float x) {
+    const float tension = 3.0158f;
+    const float overshoot = tension * 1.525f;
+
+    return x < 0.5
+        ? 0.5f * (x * x * ((overshoot + 1) * x - overshoot))
+        : 0.5f * ((2 * x - 2) * (2 * x - 2) * ((overshoot + 1) * (2 * x - 2) + overshoot) + 2);
+}
+
+inline raylib::Color randomColor() {
+    return raylib::Color(
+        GetRandomValue(128, 255),
+        GetRandomValue(128, 255),
+        GetRandomValue(128, 255),
+        255
     );
-}
-
-inline ImVec2 convert(raylib::Vector2 a) {
-	return { a.x, a.y };
-}
-
-inline ImU32 convert(raylib::Color a) {
-	return IM_COL32(a.r, a.g, a.b, a.a);
-}
-
-inline ImU32 convert(ImVec4 a) {
-	return IM_COL32((uint8_t)(a.x * 255.0f), (uint8_t)(a.y * 255.0f), (uint8_t)(a.z * 255.0f), (uint8_t)(a.w * 255.0f));
 }

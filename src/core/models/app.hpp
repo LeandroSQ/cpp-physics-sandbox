@@ -1,37 +1,34 @@
 #pragma once
 
 #include "../precomp.hpp"
-#include "quadtree.hpp"
-#include "solver.hpp"
-#include "interation_handler.hpp"
+#include "bullet.hpp"
+#include "ship.hpp"
+#include "asteroid.hpp"
+#include "wave.hpp"
+#include "../data/spatial-hash-grid.hpp"
 
 class App {
   private:
-    Solver solver;
-    Camera2D camera;
-    Quadtree quadtree;
-    InterationHandler spawner;
+    raylib::RenderTexture2D frameBuffer;
 
-    bool isRenderingQuadtree;
+    SpatialHashGrid asteroids;
+    std::list<Bullet> bullets;
+    float shootTimer;
+    Ship ship;
 
-    float frameStartTime;
-    uint8_t frameCounter;
-    float frameTimeSum;
+    WaveController wave;
 
-    void handleInput(float deltaTime);
-    void renderGUI();
-    void setupGUI();
+    void shoot();
+    void updateAsteroids();
+    void updateBullets();
 
   public:
-
-    App();
+    App() = default;
     ~App();
-
-    void onFrameStart();
-    void onFrameEnd();
 
     void setup();
     void update();
     void render();
-    void resize();
+    void onResize(uint32_t width, uint32_t height);
+    void renderGUI();
 };

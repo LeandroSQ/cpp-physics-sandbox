@@ -2,4 +2,4 @@
 
 set -e
 
-find ./build -depth 1 -name 'sandbox.*'  -print -exec cp {} src/web \;
+find ./build -depth 1 -name 'asteroids.*'  -print -exec cp {} src/web \;

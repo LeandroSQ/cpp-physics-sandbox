@@ -1,6 +1,7 @@
 #pragma once
 
 // Raylib
+#define RPRAND_IMPLEMENTATION 1
 #include <raylib.h>
 #include <raylib-cpp.hpp>
 
@@ -21,4 +22,6 @@
 #include <cstdio>
 #include <string>
 #include <vector>
+#include <list>
 #include <algorithm>
+#include <optional>
