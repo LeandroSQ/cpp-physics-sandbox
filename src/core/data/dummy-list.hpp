@@ -22,5 +22,5 @@ class DummyList : public IContainer {
 	void insert(std::shared_ptr<Asteroid> asteroid) override;
 	void remove(std::shared_ptr<Asteroid> asteroid) override;
 	std::vector<std::shared_ptr<Asteroid>> retrieve(raylib::Vector2 position, uint16_t radius) override;
-    std::vector<std::shared_ptr<Asteroid>> all() override;
+    std::vector<std::shared_ptr<Asteroid>> getAll() override;
 };

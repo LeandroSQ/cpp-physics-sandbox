@@ -6,8 +6,12 @@
 #include "ship.hpp"
 #include "../data/spatial-hash-grid.hpp"
 
+class App;
+
 class WaveController {
-  public:
+  private:
+    std::weak_ptr<App> app;
+
     float waveInterval = LEVEL_WAVE_INTERVAL;
     float spawnInterval = LEVEL_ASTEROID_SPAWN_INTERVAL;
     uint8_t asteroidsPerWave = LEVEL_ASTEROIDS_PER_WAVE;
@@ -18,12 +22,16 @@ class WaveController {
     float timeSinceLastSpawn = spawnInterval / 2.0f;
     uint16_t asteroidsSpawned = 0;
 
+    // Threading
+    std::thread thread;
+
+    void spawn(std::shared_ptr<App> app);
+    void threadCallback();
+
   public:
-    WaveController() = default;
-    ~WaveController() = default;
+    WaveController();
+    ~WaveController();
 
-    void update(IContainer &asteroids, std::list<Bullet> &bullets, Ship &ship);
-
-private:
-    void spawn(IContainer &asteroids, std::list<Bullet> &bullets, Ship &ship);
+    void renderGUI();
+    void start(std::shared_ptr<App> app);
 };

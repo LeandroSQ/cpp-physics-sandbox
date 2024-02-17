@@ -82,6 +82,8 @@
         "__availability": "cpp"
     },
     "cSpell.words": [
+        "Cooldown",
+        "cpptrace",
         "emscripten",
         "Emscripten",
         "EMSDK",
@@ -93,7 +95,9 @@
         "SMPTE",
         "substeps"
     ],
-    "cmake.configureOnOpen": false,
+    "cmake.configureOnOpen": true,
+    "cmake.buildBeforeRun": true,
+    "cmake.parseBuildDiagnostics": true,
     "C_Cpp.intelliSenseEngine": "disabled",
     "clangd.path": "/usr/bin/clangd",
     "clangd.arguments": [

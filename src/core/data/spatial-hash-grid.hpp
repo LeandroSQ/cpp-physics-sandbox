@@ -3,6 +3,7 @@
 #include "../precomp.hpp"
 #include "icontainer.hpp"
 #include "../utils.hpp"
+#include <vector>
 
 class SpatialHashGrid : public IContainer {
   private:
@@ -10,8 +11,9 @@ class SpatialHashGrid : public IContainer {
 		std::list<std::shared_ptr<Asteroid>> asteroids;
         raylib::Color color = randomColor();
 	};
+    std::vector<std::shared_ptr<Asteroid>> cache;
 	std::vector<Cell> cells;
-    uint16_t count;
+    std::mutex mutex;
 
   public:
     uint16_t rows;
@@ -23,6 +25,7 @@ class SpatialHashGrid : public IContainer {
 
 	void clear() override;
     bool isEmpty() override;
+    bool isInitialized() override;
     uint32_t size() override;
 	uint16_t getCellIndex(raylib::Vector2 position) override;
 	raylib::Vector2 getCellPosition(uint16_t index) override;
@@ -31,6 +34,6 @@ class SpatialHashGrid : public IContainer {
 	void remove(std::shared_ptr<Asteroid> asteroid) override;
 	void update();
 	std::vector<std::shared_ptr<Asteroid>> retrieve(raylib::Vector2 position, uint16_t radius) override;
-    std::vector<std::shared_ptr<Asteroid>> all() override;
+    std::vector<std::shared_ptr<Asteroid>> getAll() override;
     void render();
 };

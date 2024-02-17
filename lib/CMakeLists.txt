@@ -76,13 +76,13 @@ function(include_library name version source)
 
         # Include
         if(EXISTS ${INSTALL_PATH}/${name}-${version}/CMakeLists.txt)
-            message(STATUS "Including library's directory ${name} ${version}")
+            message(STATUS "Including library's CMakeLists.txt ${name} ${version}")
             add_subdirectory(${INSTALL_PATH}/${name}-${version} ${CMAKE_CURRENT_BINARY_DIR}/${name}-${version})
         elseif(EXISTS ${INSTALL_PATH}/${name}-${version}/projects/CMake/CMakeLists.txt)
-            message(STATUS "Including library's directory ${name} ${version}")
+            message(STATUS "Including library's projects/CMake/CMakeLists.txt ${name} ${version}")
             add_subdirectory(${INSTALL_PATH}/${name}-${version}/projects/CMake ${CMAKE_CURRENT_BINARY_DIR}/${name}-${version})
         elseif(EXISTS ${INSTALL_PATH}/${name}-${version}/include)
-            message(STATUS "Including library ${name} ${version}")
+            message(STATUS "Including library 'include' folder ${name} ${version}")
             add_library(${name} INTERFACE)
         else()
             # Check if on the root there is .h, .hpp, .c or .cpp files
