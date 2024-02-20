@@ -85,9 +85,9 @@ jobs:
       - name: Copy WASM module (Ubuntu)
         if: matrix.target == 'web' && matrix.os == 'ubuntu-latest'
         run: |
-          cp ./build/asteroids.wasm ./src/web
-          cp ./build/asteroids.js ./src/web
-          cp ./build/asteroids.html ./src/web
+          cp ./build/sandbox.wasm ./src/web
+          cp ./build/sandbox.js ./src/web
+          cp ./build/sandbox.html ./src/web
 
       - name: Deploy to GitHub Pages (Ubuntu)
         if: matrix.target == 'web' && matrix.os == 'ubuntu-latest'

@@ -1,5 +1,11 @@
 #include "settings.hpp"
 
-unsigned int WIDTH = 850;
-unsigned int HEIGHT = 750;
-unsigned int TARGET_FPS = 60;
+bool ENABLE_CIRCLE_CONSTRAINT = true;
+float CENTER_CIRCLE_CURRENT_RADIUS = CENTER_CIRCLE_RADIUS;
+bool ENABLE_SPAWN_SPREAD = false;
+bool ENABLE_HEAT_FROM_CIRCLE_BORDER = false;
+bool ENABLE_SOLID_COLOR = false;
+bool ENABLE_TEMPERATURE = false;
+bool ENABLE_FIXED_RAINBOW = true;
+bool ENABLE_RAINBOW_COLORS = false;
+bool ENABLE_AUTO_ADJUST_SUBSTEPS = true;

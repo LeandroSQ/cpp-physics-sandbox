@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.18.0)
-set(PROJECT_NAME asteroids)
+set(PROJECT_NAME sandbox)
 
 function(dump_info)
     message(STATUS "CMAKE_SYSTEM: ${CMAKE_SYSTEM}")

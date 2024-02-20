@@ -3,6 +3,5 @@ lib/*/
 imgui.ini
 compile_commands.json
 .DS_Store
-src/web/asteroids.*
-src/tests
+src/web/sandbox.*
 .cache

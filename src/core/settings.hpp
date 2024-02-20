@@ -1,37 +1,48 @@
 #pragma once
 
 // Constants - General
-extern unsigned int WIDTH;
-extern unsigned int HEIGHT;
-extern unsigned int TARGET_FPS;
+const unsigned int WIDTH = 850;
+const unsigned int HEIGHT = 850;
+const unsigned int TARGET_FPS = 60;
 
-// Constants - Ship
-const float SHIP_ANGULAR_ACCELERATION = 30.0f * DEG2RAD;
-const float SHIP_ACCELERATION = 150.0f;
-const float SHIP_DAMPING = 0.98f;
-const float SHIP_ANGULAR_DAMPING = 0.90f;
+// Constants - Quadtree
+const unsigned int MAX_OBJECTS = 3;
+const unsigned int MAX_SUBDIVISIONS = 5;
 
-// Constants - Asteroid
-const float ASTEROID_RADIUS = 25.0f;
-const float ASTEROID_JAGGEDNESS = 5.0f;
-const float ASTEROID_ANGULAR_VELOCITY = 100.0f * DEG2RAD;
-const float ASTEROID_VELOCITY = 100.0f;
-const int ASTEROID_MIN_VERTEX_COUNT = 8;
-const int ASTEROID_MAX_VERTEX_COUNT = 32;
-const int ASTEROID_FRAGMENTS_COUNT = 3;
-const float ASTEROID_RADIUS_DIFFERENCE = 10.0f;
-const float ASTEROID_MIN_RADIUS_TO_SPLIT = 20.0f;
+// Constants - Spawn
+#ifdef PLATFORM_WEB
+    const float OBJECT_RADIUS = 10.0f;
+    const unsigned int SPAWN_COUNT = 500;
+#else
+    const float OBJECT_RADIUS = 10.0f;
+    const unsigned int SPAWN_COUNT = 800;
+#endif
+const float SPAWN_INTERVAL = 0.07f;
+const float MANUAL_SPAWN_INTERVAL = 0.25f;
 
-// Constants - Bullet
-const float BULLET_VELOCITY = 500.0f;
-const float BULLET_RADIUS = 2.0f;
-const float BULLET_SHOOT_INTERVAL = 0.250f;
+// Constants - Temperature
+const float AIR_TEMPERATURE = 4000.0f;
+const float GROUND_TEMPERATURE = 10000.0f;
 
-// Constants - Level
-const uint8_t LEVEL_ASTEROIDS_PER_WAVE = 10;
-const float LEVEL_ASTEROID_SPAWN_INTERVAL = 5.0f;
-const float LEVEL_ASTEROID_SPAWN_INTERVAL_DECREMENT_PER_WAVE = 0.5f;
-const float LEVEL_ASTEROID_SPAWN_INTERVAL_MIN = 0.05f;
-const float LEVEL_WAVE_INTERVAL = (LEVEL_ASTEROIDS_PER_WAVE + 1) * LEVEL_ASTEROID_SPAWN_INTERVAL;
-const float LEVEL_WAVE_INTERVAL_DECREMENT = 0.5f;
-const float LEVEL_WAVE_INTERVAL_MIN = 2.0f;
+// Constants - Interaction
+const float CENTER_CIRCLE_RADIUS = 400.0f;
+const float DRAGGING_ACCELERATION = 35000.0f;
+const float EXPLOSION_FORCE = 1500000.0f;
+const float EXPLOSION_RADIUS = 50.0f;
+
+// #define QUADTREE_DUMMY
+
+// Flags - Constraints
+extern float CENTER_CIRCLE_CURRENT_RADIUS;
+extern bool ENABLE_CIRCLE_CONSTRAINT;
+
+// Flags - Render mode
+extern bool ENABLE_HEAT_FROM_CIRCLE_BORDER;
+extern bool ENABLE_TEMPERATURE;
+extern bool ENABLE_SOLID_COLOR;
+extern bool ENABLE_FIXED_RAINBOW;
+extern bool ENABLE_RAINBOW_COLORS;
+extern bool ENABLE_AUTO_ADJUST_SUBSTEPS;
+
+// Flags - Spawning
+extern bool ENABLE_SPAWN_SPREAD;

@@ -1,96 +1,138 @@
 #include "app.hpp"
+#include "../precomp.hpp"
 #include "../settings.hpp"
-#include "RenderTexture.hpp"
-#include "asteroid.hpp"
-#include "imgui.h"
-#include "polygon.hpp"
+#include "../interface/palette.hpp"
+#include "../utils.hpp"
 #include "raylib.h"
-#include <memory>
-#include <vector>
 
-App::~App() {
-    TraceLog(LOG_INFO, "App::~App()");
-    rlImGuiShutdown();
+App::App() : quadtree(raylib::Rectangle{ 0.0f, 0.0f, (float)WIDTH, (float)HEIGHT }), solver(quadtree), spawner(quadtree) {
+	camera.offset = raylib::Vector2{ 0.0f, 0.0f };
+	camera.target = raylib::Vector2{ 0.0f, 0.0f };
+	camera.zoom = 1.0f;
+	camera.rotation = 0.0f;
 }
 
-void App::shoot() {
-    Bullet bullet {
-        ship.position,
-        raylib::Vector2(cosf(ship.angle), sinf(ship.angle)) * BULLET_VELOCITY
-    };
-    bullets.push_back(bullet);
+App::~App() {
+	rlImGuiShutdown();
+}
+
+void App::handleInput(float delta) {
+	if (ImGui::GetIO().WantCaptureKeyboard) return;
+
+	// Rotate gravity vector
+	const float angleVelocity = 1.25f;
+	if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) {
+		solver.gravity = solver.gravity.Rotate(angleVelocity * delta);
+	}
+	if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) {
+		solver.gravity = solver.gravity.Rotate(-angleVelocity * delta);
+	}
+
+	// Increment/decrement gravity force
+	const auto steps = raylib::Vector2::One() * 2.5f * delta;
+	if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) {
+		solver.gravity += steps * solver.gravity.Normalize();
+	}
+	if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) {
+		solver.gravity -= steps * solver.gravity.Normalize();
+	}
+
+	// Reverse gravity direction
+	if (IsKeyPressed(KEY_SPACE)) {
+		solver.gravity *= -1.0f;
+	}
+
+    // Zero gravity
+    if (IsKeyPressed(KEY_Z)) {
+        if (solver.gravity.Length() == 0.0f)
+            solver.gravity = raylib::Vector2(0.0f, 9.8f);
+        else
+            solver.gravity = raylib::Vector2::Zero();
+    }
+
+	// Toggle rendering debug quadtree
+	if (IsKeyPressed(KEY_APOSTROPHE) || IsKeyPressed(KEY_GRAVE)) {
+		TraceLog(LOG_INFO, "app: Toggling quadtree rendering");
+		isRenderingQuadtree = !isRenderingQuadtree;
+	}
 }
 
 void App::setup() {
 #ifdef DEBUG
-    SetTraceLogLevel(LOG_DEBUG);
+	SetTraceLogLevel(LOG_DEBUG);
+#else
+	SetTraceLogLevel(LOG_WARNING);
 #endif
 
-    TraceLog(LOG_INFO, "App::setup()");
+	TraceLog(LOG_INFO, "app: Starting...");
+	SetRandomSeed(GetTime());
 
-    rlImGuiSetup(true);
-    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-
-    ship.setup();
-}
-
-void App::updateAsteroids() {
-    Asteroid::collisionCount = 0;
-    for (auto &asteroid : asteroids.all()) asteroid->update(asteroids);
-
-    asteroids.update();
-}
-
-void App::updateBullets() {
-    if (shootTimer > BULLET_SHOOT_INTERVAL) shootTimer = BULLET_SHOOT_INTERVAL;
-    else shootTimer += GetFrameTime();
-    if (shootTimer >= BULLET_SHOOT_INTERVAL && IsKeyDown(KEY_SPACE)) {
-        shoot();
-        shootTimer -= BULLET_SHOOT_INTERVAL;
-    }
-
-    for (auto it = bullets.begin(); it != bullets.end();) {
-        if (it->update(asteroids)) {
-            it = bullets.erase(it);
-        } else {
-            it++;
-        }
-    }
+	setupGUI();
 }
 
 void App::update() {
-    updateAsteroids();
-    updateBullets();
-    ship.update();
-    wave.update(asteroids, bullets, ship);
+	auto delta = GetFrameTime();
+
+    spawner.update(getRelativeMousePosition(), solver.substeps, delta, !ImGui::GetIO().WantCaptureMouse);
+	solver.solve(delta);
+
+	handleInput(delta);
 }
 
 void App::render() {
-    frameBuffer.BeginMode();
-    ClearBackground(BLACK);
+    // Background
+    ClearBackground(PALETTE_GREY);
+    DrawCircle(GetScreenWidth() / 2, GetScreenHeight() / 2, CENTER_CIRCLE_CURRENT_RADIUS, PALETTE_BLACK);
 
-    for (auto &asteroid : asteroids.all()) asteroid->render();
+	// Use the 2D camera to translate the simulation if it's smaller than the window
+	BeginMode2D(camera);
+	if (isRenderingQuadtree) {
+		quadtree.render();
+	} else {
+		auto all = quadtree.getAll();
+		for (auto object : all) {
+			object->render();
+		}
+	}
+	EndMode2D();
 
-    for (auto &bullet : bullets) bullet.render();
-
-    ship.render();
-
-    // Render grid
-    asteroids.render();
-
-    frameBuffer.EndMode();
+	renderGUI();
 }
 
-void App::onResize(uint32_t width, uint32_t height) {
-    TraceLog(LOG_INFO, "App::onResize(%i, %i)", width, height);
-    frameBuffer = raylib::RenderTexture2D(width, height);
+void App::resize() {
+	// Ensure the simulation is centered
+	camera.target = raylib::Vector2(
+        WIDTH / 2.0f - GetScreenWidth() / 2.0f,
+        HEIGHT / 2.0f - GetScreenHeight() / 2.0f
+    );
+}
 
-    // Update global settings
-    WIDTH = width;
-    HEIGHT = height;
+void App::onFrameStart() {
+    frameStartTime = GetTime();
+}
 
-    // Update the grid
-    const auto size = (float)ASTEROID_RADIUS * 4;
-    asteroids.resize(ceilf(HEIGHT / size), ceilf(WIDTH / size));
+void App::onFrameEnd() {
+    if (!ENABLE_AUTO_ADJUST_SUBSTEPS) return;
+
+    const float frameTime = GetTime() - frameStartTime;
+    frameCounter++;
+    frameTimeSum += frameTime;
+
+    if (frameCounter <= TARGET_FPS) return;
+
+    // Detect slowness and adjust simulation substeps accordingly
+    float expectedFrameTime = (1.0f / TARGET_FPS);
+    float averageFrameTime = (frameTimeSum / frameCounter);
+    if (solver.substeps > 1 && averageFrameTime > expectedFrameTime) {
+        TraceLog(LOG_WARNING, "Detected slowness, decreasing simulation substeps. Simulation time: %.2fms (%.2fms expected)", averageFrameTime, expectedFrameTime);
+        solver.substeps --;
+        if (solver.substeps < 1) solver.substeps = 1;
+    } else if (solver.substeps < 10 && expectedFrameTime - averageFrameTime >= 0.5f * expectedFrameTime) {
+        TraceLog(LOG_DEBUG, "Detected under utilization, increasing simulation substeps. Simulation time: %.2fms (%.2fms expected)", averageFrameTime, expectedFrameTime);
+        solver.substeps ++;
+        if (solver.substeps > 10) solver.substeps = 10;
+    }
+
+    frameCounter = 0;
+    frameTimeSum = 0;
 }
