@@ -59,33 +59,13 @@ function(define_project_variables)
         set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
     endif()
 
-    if("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
-        add_compile_options(-fsanitize=address)
-        add_link_options(-fsanitize=address)
-    endif()
-
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
     set(CMAKE_C_STANDARD 11)
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O3")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
     set(CMAKE_CXX_STANDARD 23)
-
-    # Set colors for ninja
-    if(CMAKE_GENERATOR STREQUAL "Ninja")
-        if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-            SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fdiagnostics-color=always")
-        elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
-            SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
-        endif()
-
-        if("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
-            SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fdiagnostics-color=always")
-        elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
-            SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fcolor-diagnostics")
-        endif()
-    endif()
 
     # For clang use -std=c++23
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++23")
@@ -158,35 +138,6 @@ add_subdirectory(lib)
 add_executable(${PROJECT_NAME} ${SOURCES})
 define_target_properties(${PROJECT_NAME})
 
-# region dSYM
-if(APPLE)
-    add_custom_command(
-        TARGET ${PROJECT_NAME}
-        POST_BUILD
-        COMMAND dsymutil $<TARGET_FILE:${PROJECT_NAME}>
-    )
-endif()
-# endregion
-
-# # region Run assets.sh after build
-# add_custom_command(
-#     TARGET ${PROJECT_NAME}
-#     PRE_BUILD
-#     COMMAND sh ${CMAKE_SOURCE_DIR}/scripts/assets.sh
-#     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-# )
-# # endregion
-
-# region Format
-file(GLOB_RECURSE FORMAT_SOURCES "src/core/*.cpp" "src/core/*.hpp")
-add_custom_target(${PROJECT_NAME}_format
-    COMMAND clang-format -i ${FORMAT_SOURCES}
-    COMMENT "Running clang-format"
-    DEPENDS ${FORMAT_SOURCES}
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-)
-# endregion
-
 # region Linter
 file(GLOB_RECURSE LINT_SOURCES "src/core/*.cpp" "src/core/*.hpp")
 add_custom_target(${PROJECT_NAME}_lint
@@ -194,10 +145,8 @@ add_custom_target(${PROJECT_NAME}_lint
     COMMENT "Running clang-tidy"
     DEPENDS ${LINT_SOURCES}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-)
-# endregion
-
-# endregion# region Clean
+)# endregion
+# region Clean
 add_custom_target(${PROJECT_NAME}_clean
     COMMAND sh ${CMAKE_SOURCE_DIR}/scripts/clean.sh
     COMMENT "Running clean.sh"

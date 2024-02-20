@@ -37,6 +37,6 @@ std::vector<std::shared_ptr<Asteroid>> DummyList::retrieve(raylib::Vector2 posit
     return asteroids;
 }
 
-std::vector<std::shared_ptr<Asteroid>> DummyList::getAll() {
+std::vector<std::shared_ptr<Asteroid>> DummyList::all() {
     return asteroids;
 }

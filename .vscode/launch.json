@@ -3,7 +3,6 @@
     "configurations": [
         {
             "name": "Debug (lldb)",
-            "preLaunchTask": "CMake: build",
             "type": "cppdbg",
             "request": "launch",
             "program": "${command:cmake.launchTargetPath}",
@@ -19,6 +18,5 @@
             "console": "externalTerminal",
             "MIMode": "lldb"
         },
-
     ]
 }
